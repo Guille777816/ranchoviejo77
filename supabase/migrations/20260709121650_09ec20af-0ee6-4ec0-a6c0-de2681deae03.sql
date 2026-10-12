@@ -1,0 +1,1 @@
+ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS wholesale_title text DEFAULT 'Somos Mayoristas'; ALTER TABLE public.site_settings ADD COLUMN IF NOT EXISTS wholesale_text text DEFAULT 'Compra mínima AR$ 100.000';
