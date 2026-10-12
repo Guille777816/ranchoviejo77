@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { getOptimizedImageUrl } from "@/lib/image";
 
 type ProductCardProps = {
   slug: string;
@@ -18,6 +19,8 @@ function formatPrice(cents: number) {
 
 export function ProductCard({ slug, name, price_cents, image, stock }: ProductCardProps) {
   const outOfStock = typeof stock === "number" && stock <= 0;
+  const optimizedImage = getOptimizedImageUrl(image, 400, 80);
+
   return (
     <Link
       to="/producto/$slug"
@@ -25,11 +28,14 @@ export function ProductCard({ slug, name, price_cents, image, stock }: ProductCa
       className="group overflow-hidden rounded-lg border bg-card transition-shadow hover:shadow-md"
     >
       <div className="relative aspect-square bg-muted">
-        {image ? (
+        {optimizedImage ? (
           <img
-            src={image}
+            src={optimizedImage}
             alt={name}
             loading="lazy"
+            decoding="async"
+            width={400}
+            height={400}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (

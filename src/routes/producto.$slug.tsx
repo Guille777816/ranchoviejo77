@@ -8,6 +8,7 @@ import { ProductCard, formatPrice } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { useSiteSettings, whatsappLink } from "@/lib/site-settings";
+import { getOptimizedImageUrl } from "@/lib/image";
 import { Check, MessageCircle, ShoppingBag } from "lucide-react";
 
 export const Route = createFileRoute("/producto/$slug")({
@@ -126,7 +127,13 @@ function ProductoPage() {
           <div>
             <div className="aspect-square overflow-hidden rounded-lg border bg-muted">
               {mainImg ? (
-                <img src={mainImg} alt={product.name} className="h-full w-full object-cover" />
+                <img
+                  src={getOptimizedImageUrl(mainImg, 800, 85)}
+                  alt={product.name}
+                  loading="eager"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <div className="flex h-full items-center justify-center text-muted-foreground">
                   Sin imagen
@@ -145,7 +152,13 @@ function ProductoPage() {
                       i === activeIdx ? "border-primary" : "border-border/60"
                     }`}
                   >
-                    <img src={im.url} alt={product.name} className="h-full w-full object-cover" />
+                    <img
+                      src={getOptimizedImageUrl(im.url, 150, 75)}
+                      alt={product.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover"
+                    />
                   </button>
                 ))}
               </div>

@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ProductCard } from "@/components/ProductCard";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 const searchSchema = z.object({
   q: z.string().optional(),
@@ -22,6 +24,8 @@ export const Route = createFileRoute("/tienda")({
   component: Tienda,
 });
 
+const PAGE_SIZE = 16;
+
 function Tienda() {
   const { q, cat } = Route.useSearch();
 
@@ -37,9 +41,15 @@ function Tienda() {
     },
   });
 
-  const { data: products, isLoading } = useQuery({
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery({
     queryKey: ["products-public", q ?? "", cat ?? ""],
-    queryFn: async () => {
+    queryFn: async ({ pageParam = 0 }) => {
       let query = supabase
         .from("products")
         .select("id, name, slug, price_cents, stock, category_id, product_images(url, position)")
@@ -54,12 +64,21 @@ function Tienda() {
         if (matched) query = query.eq("category_id", matched.id);
       }
 
-      const { data, error } = await query.limit(60);
+      const from = pageParam * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
+      const { data: prods, error } = await query.range(from, to);
       if (error) throw error;
-      return data ?? [];
+      return prods ?? [];
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length < PAGE_SIZE) return undefined;
+      return allPages.length;
     },
     enabled: !cat || !!categories,
   });
+
+  const products = data?.pages.flatMap((page) => page) ?? [];
 
   return (
     <div className="min-h-screen">
@@ -128,6 +147,27 @@ function Tienda() {
                   />
                 );
               })}
+            </div>
+          )}
+
+          {hasNextPage && (
+            <div className="mt-8 flex justify-center">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className="min-w-44"
+              >
+                {isFetchingNextPage ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Cargando más...
+                  </>
+                ) : (
+                  "Cargar más productos"
+                )}
+              </Button>
             </div>
           )}
         </div>
