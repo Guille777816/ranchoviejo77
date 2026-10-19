@@ -7,4 +7,4 @@ Disallow: /carrito
 Disallow: /auth
 Disallow: /api/*
 
-Sitemap: https://www.ranchoviejo.com.ar/sitemap.xml
+Sitemap: https://ranchoviejo.com.ar/sitemap.xml

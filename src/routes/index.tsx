@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://ranchoviejo.com.ar/" },
       { property: "og:site_name", content: "Rancho Viejo" },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://ranchoviejo.com.ar/logo-rancho-viejo.png" },
+      { property: "og:image", content: "https://ranchoviejo.com.ar/og-image.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Mates artesanales de algarrobo y cuero | Rancho Viejo" },
       {
@@ -39,11 +39,10 @@ export const Route = createFileRoute("/")({
         content:
           "Mates artesanales, bombillas, yerbas y accesorios. Grabado láser, venta mayorista y envíos a todo el país.",
       },
-      { name: "twitter:image", content: "https://ranchoviejo.com.ar/logo-rancho-viejo.png" },
+      { name: "twitter:image", content: "https://ranchoviejo.com.ar/og-image.jpg" },
     ],
     links: [
       { rel: "canonical", href: "https://ranchoviejo.com.ar/" },
-      { rel: "alternate", hrefLang: "es-AR", href: "https://ranchoviejo.com.ar/" },
     ],
   }),
   component: Home,
@@ -129,7 +128,6 @@ function Home() {
                     height={600}
                     fetchPriority="high"
                     decoding="async"
-                    style={{ aspectRatio: "16 / 5" }}
                     className="h-full w-full object-cover"
                   />
                   {(b.title || b.subtitle) && (

@@ -21,7 +21,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <img
-            src="/logo-rancho-viejo.jpg"
+            src="/logo-rancho-viejo.png"
             alt={siteName}
             width={36}
             height={36}
