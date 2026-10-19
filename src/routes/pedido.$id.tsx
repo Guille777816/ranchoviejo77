@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { formatPrice } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
+import { useEffect } from "react";
 
 const searchSchema = z.object({
   status: z.enum(["success", "pending", "failure"]).optional(),
@@ -38,6 +39,22 @@ function PedidoPage() {
       } | null) ?? null;
     },
   });
+
+  useEffect(() => {
+    if (order && (status === "success" || order.status === "paid")) {
+      const totalAmount = Number((order.total_cents / 100).toFixed(2));
+      const totalQty =
+        order.order_items?.reduce((acc, item) => acc + item.quantity, 0) || 1;
+      (window as any).plerdysendData = {
+        type: "commerce",
+        data: {
+          order_id: order.id,
+          money: totalAmount,
+          quantity: totalQty,
+        },
+      };
+    }
+  }, [order, status]);
 
   const banner = (() => {
     if (status === "success" || order?.status === "paid")
