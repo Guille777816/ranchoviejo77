@@ -36,6 +36,7 @@ export function ProductCard({ slug, name, price_cents, image, stock }: ProductCa
             decoding="async"
             width={400}
             height={400}
+            style={{ aspectRatio: "1 / 1" }}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (

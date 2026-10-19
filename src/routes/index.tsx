@@ -12,25 +12,38 @@ import { ShoppingBag } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales" },
+      { title: "Mates artesanales de algarrobo y cuero | Rancho Viejo" },
       {
         name: "description",
         content:
-          "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos. Envíos a todo el país.",
+          "Mates artesanales, bombillas, yerbas y accesorios. Grabado láser, venta mayorista y envíos a todo el país.",
       },
+      { name: "robots", content: "index, follow" },
       {
         property: "og:title",
-        content: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales",
+        content: "Mates artesanales de algarrobo y cuero | Rancho Viejo",
       },
       {
         property: "og:description",
         content:
-          "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos. Envíos a todo el país.",
+          "Mates artesanales, bombillas, yerbas y accesorios. Grabado láser, venta mayorista y envíos a todo el país.",
       },
-      { property: "og:url", content: "https://www.ranchoviejo.com.ar/" },
+      { property: "og:url", content: "https://ranchoviejo.com.ar/" },
+      { property: "og:site_name", content: "Rancho Viejo" },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://ranchoviejo.com.ar/logo-rancho-viejo.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Mates artesanales de algarrobo y cuero | Rancho Viejo" },
+      {
+        name: "twitter:description",
+        content:
+          "Mates artesanales, bombillas, yerbas y accesorios. Grabado láser, venta mayorista y envíos a todo el país.",
+      },
+      { name: "twitter:image", content: "https://ranchoviejo.com.ar/logo-rancho-viejo.png" },
     ],
     links: [
-      { rel: "canonical", href: "https://www.ranchoviejo.com.ar/" },
+      { rel: "canonical", href: "https://ranchoviejo.com.ar/" },
+      { rel: "alternate", hrefLang: "es-AR", href: "https://ranchoviejo.com.ar/" },
     ],
   }),
   component: Home,
@@ -103,14 +116,20 @@ function Home() {
     <div className="min-h-screen">
       <SiteHeader />
       {banners && banners.length > 0 ? (
-        <section className="relative border-b bg-background">
-          <div className="relative mx-auto aspect-[16/7] w-full max-w-7xl overflow-hidden md:aspect-[16/5]">
+        <section className="relative border-b bg-background min-h-[260px] sm:min-h-[320px] md:min-h-[420px]">
+          <h1 className="sr-only">Mates artesanales de algarrobo, camionero y cuero</h1>
+          <div className="relative mx-auto aspect-[16/7] w-full max-w-7xl overflow-hidden md:aspect-[16/5] min-h-[260px] sm:min-h-[320px] md:min-h-[420px]">
             {banners.map((b, i) => {
               const inner = (
                 <>
                   <img
                     src={b.image_url}
-                    alt={b.title ?? "banner"}
+                    alt={b.title ?? "Mates artesanales de algarrobo, camionero y cuero"}
+                    width={1920}
+                    height={600}
+                    fetchPriority="high"
+                    decoding="async"
+                    style={{ aspectRatio: "16 / 5" }}
                     className="h-full w-full object-cover"
                   />
                   {(b.title || b.subtitle) && (
@@ -161,10 +180,10 @@ function Home() {
           </div>
         </section>
       ) : (
-        <section className="border-b bg-secondary/40">
-          <div className="mx-auto max-w-6xl px-4 py-14 text-center md:py-20">
+        <section className="border-b bg-secondary/40 min-h-[260px] sm:min-h-[320px] md:min-h-[420px] flex items-center">
+          <div className="mx-auto max-w-6xl px-4 py-14 text-center md:py-20 w-full">
             <h1 className="text-4xl font-bold tracking-tight md:text-6xl">
-              Mates con alma de rancho
+              Mates artesanales de algarrobo, camionero y cuero
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground md:text-lg">
               Trabajo artesanal, materiales nobles y la tradición de siempre.

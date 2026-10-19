@@ -23,7 +23,12 @@ export function SiteHeader() {
           <img
             src="/logo-rancho-viejo.jpg"
             alt={siteName}
-            className="h-9 w-auto rounded-full object-contain"
+            width={36}
+            height={36}
+            loading="lazy"
+            decoding="async"
+            style={{ aspectRatio: "1 / 1" }}
+            className="h-9 w-9 rounded-full object-contain"
           />
         </Link>
 

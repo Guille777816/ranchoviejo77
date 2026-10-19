@@ -141,8 +141,11 @@ function ProductoPage() {
                 <img
                   src={getOptimizedImageUrl(mainImg, 800, 85)}
                   alt={product.name}
-                  loading="eager"
+                  fetchPriority="high"
                   decoding="async"
+                  width={800}
+                  height={800}
+                  style={{ aspectRatio: "1 / 1" }}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -168,6 +171,9 @@ function ProductoPage() {
                       alt={product.name}
                       loading="lazy"
                       decoding="async"
+                      width={64}
+                      height={64}
+                      style={{ aspectRatio: "1 / 1" }}
                       className="h-full w-full object-cover"
                     />
                   </button>

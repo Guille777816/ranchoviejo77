@@ -81,25 +81,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales" },
-      { name: "description", content: "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos de calidad superior. Envíos a todo el país." },
-      { property: "og:title", content: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales" },
-      { name: "twitter:title", content: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales" },
-      { property: "og:description", content: "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos de calidad superior. Envíos a todo el país." },
-      { name: "twitter:description", content: "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos de calidad superior. Envíos a todo el país." },
-      { property: "og:image", content: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg" },
-      { name: "twitter:image", content: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg" },
+      { title: "Mates artesanales de algarrobo y cuero | Rancho Viejo" },
+      { name: "description", content: "Mates artesanales, bombillas, yerbas y accesorios. Grabado láser, venta mayorista y envíos a todo el país." },
+      { name: "robots", content: "index, follow" },
+      { property: "og:title", content: "Mates artesanales de algarrobo y cuero | Rancho Viejo" },
+      { name: "twitter:title", content: "Mates artesanales de algarrobo y cuero | Rancho Viejo" },
+      { property: "og:description", content: "Mates artesanales, bombillas, yerbas y accesorios. Grabado láser, venta mayorista y envíos a todo el país." },
+      { name: "twitter:description", content: "Mates artesanales, bombillas, yerbas y accesorios. Grabado láser, venta mayorista y envíos a todo el país." },
+      { property: "og:image", content: "https://ranchoviejo.com.ar/logo-rancho-viejo.png" },
+      { name: "twitter:image", content: "https://ranchoviejo.com.ar/logo-rancho-viejo.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://www.ranchoviejo.com.ar" },
-      { property: "og:site_name", content: "Rancho Viejo Mates" },
+      { property: "og:url", content: "https://ranchoviejo.com.ar/" },
+      { property: "og:site_name", content: "Rancho Viejo" },
       { property: "og:locale", content: "es_AR" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "canonical", href: "https://www.ranchoviejo.com.ar" },
-      { rel: "icon", type: "image/jpeg", href: "/logo-rancho-viejo.jpg" },
-      { rel: "apple-touch-icon", href: "/logo-rancho-viejo.jpg" },
+      { rel: "canonical", href: "https://ranchoviejo.com.ar/" },
+      { rel: "alternate", hrefLang: "es-AR", href: "https://ranchoviejo.com.ar/" },
+      { rel: "icon", type: "image/png", href: "/logo-rancho-viejo.png" },
+      { rel: "apple-touch-icon", href: "/logo-rancho-viejo.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -109,20 +111,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
-  const schemaOrg = {
+  const organizationSchema = {
     "@context": "https://schema.org",
-    "@type": "OnlineStore",
-    name: "Rancho Viejo Mates",
-    url: "https://www.ranchoviejo.com.ar",
-    logo: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg",
-    image: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg",
-    description: "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos.",
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "AR",
-    },
-    currenciesAccepted: "ARS",
-    paymentAccepted: "Mercado Pago, Transferencia, Efectivo",
+    "@type": "Organization",
+    name: "Rancho Viejo",
+    url: "https://ranchoviejo.com.ar/",
+    logo: "https://ranchoviejo.com.ar/logo-rancho-viejo.png",
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Rancho Viejo",
+    url: "https://ranchoviejo.com.ar/",
   };
 
   return (
@@ -131,7 +132,11 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <script
           data-plerdy_code="1"
