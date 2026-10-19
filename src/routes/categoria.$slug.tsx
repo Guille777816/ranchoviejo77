@@ -6,12 +6,22 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { ProductCard } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/categoria/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.slug} — Rancho Viejo Mates` },
-      { name: "description", content: `Productos de la categoría ${params.slug}.` },
-    ],
-  }),
+  head: ({ params }) => {
+    const formattedSlug = params.slug.charAt(0).toUpperCase() + params.slug.slice(1).replace(/-/g, " ");
+    return {
+      meta: [
+        { title: `${formattedSlug} — Rancho Viejo Mates` },
+        { name: "description", content: `Comprá ${formattedSlug.toLowerCase()} artesanales de calidad superior en Rancho Viejo Mates. Envíos rápidos a todo el país.` },
+        { property: "og:title", content: `${formattedSlug} — Rancho Viejo Mates` },
+        { property: "og:description", content: `Comprá ${formattedSlug.toLowerCase()} artesanales de calidad superior en Rancho Viejo Mates. Envíos rápidos a todo el país.` },
+        { property: "og:url", content: `https://www.ranchoviejo.com.ar/categoria/${params.slug}` },
+        { property: "og:image", content: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg" },
+      ],
+      links: [
+        { rel: "canonical", href: `https://www.ranchoviejo.com.ar/categoria/${params.slug}` },
+      ],
+    };
+  },
   component: CategoriaPage,
 });
 

@@ -81,18 +81,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Rancho Viejo Mates" },
-      { name: "description", content: "Mates, bombillas y accesorios artesanales." },
-      { property: "og:title", content: "Rancho Viejo Mates" },
-      { name: "twitter:title", content: "Rancho Viejo Mates" },
-      { property: "og:description", content: "Mates, bombillas y accesorios artesanales." },
-      { name: "twitter:description", content: "Mates, bombillas y accesorios artesanales." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/294e3272-f216-4b39-aeb9-25a23410566e/id-preview-5c99a2fb--0aac8fb1-6271-47ca-8865-4ea6e48dd974.lovable.app-1780172327429.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/294e3272-f216-4b39-aeb9-25a23410566e/id-preview-5c99a2fb--0aac8fb1-6271-47ca-8865-4ea6e48dd974.lovable.app-1780172327429.png" },
+      { title: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales" },
+      { name: "description", content: "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos de calidad superior. Envíos a todo el país." },
+      { property: "og:title", content: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales" },
+      { name: "twitter:title", content: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales" },
+      { property: "og:description", content: "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos de calidad superior. Envíos a todo el país." },
+      { name: "twitter:description", content: "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos de calidad superior. Envíos a todo el país." },
+      { property: "og:image", content: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg" },
+      { name: "twitter:image", content: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://www.ranchoviejo.com.ar" },
+      { property: "og:site_name", content: "Rancho Viejo Mates" },
+      { property: "og:locale", content: "es_AR" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "canonical", href: "https://www.ranchoviejo.com.ar" },
+      { rel: "icon", type: "image/jpeg", href: "/logo-rancho-viejo.jpg" },
+      { rel: "apple-touch-icon", href: "/logo-rancho-viejo.jpg" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -101,10 +109,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const schemaOrg = {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    name: "Rancho Viejo Mates",
+    url: "https://www.ranchoviejo.com.ar",
+    logo: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg",
+    image: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg",
+    description: "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos.",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "AR",
+    },
+    currenciesAccepted: "ARS",
+    paymentAccepted: "Mercado Pago, Transferencia, Efectivo",
+  };
+
   return (
     <html lang="es">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
+        />
       </head>
       <body>
         {children}

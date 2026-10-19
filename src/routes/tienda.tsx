@@ -17,8 +17,15 @@ export const Route = createFileRoute("/tienda")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Tienda — Rancho Viejo Mates" },
-      { name: "description", content: "Catálogo completo de mates, bombillas y accesorios." },
+      { title: "Tienda Online de Mates y Accesorios — Rancho Viejo Mates" },
+      { name: "description", content: "Catálogo completo de mates artesanales, bombillas, termos y accesorios materos. Venta minorista y mayorista con envíos a todo el país." },
+      { property: "og:title", content: "Tienda Online de Mates y Accesorios — Rancho Viejo Mates" },
+      { property: "og:description", content: "Catálogo completo de mates artesanales, bombillas, termos y accesorios materos. Venta minorista y mayorista con envíos a todo el país." },
+      { property: "og:url", content: "https://www.ranchoviejo.com.ar/tienda" },
+      { property: "og:image", content: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.ranchoviejo.com.ar/tienda" },
     ],
   }),
   component: Tienda,

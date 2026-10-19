@@ -20,6 +20,11 @@ export const Route = createFileRoute("/politicas")({
         content:
           "Condiciones de venta mayorista, cambios, devoluciones y reclamos de Rancho Viejo Mates.",
       },
+      { property: "og:url", content: "https://www.ranchoviejo.com.ar/politicas" },
+      { property: "og:image", content: "https://www.ranchoviejo.com.ar/logo-rancho-viejo.jpg" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.ranchoviejo.com.ar/politicas" },
     ],
   }),
   component: PoliticasPage,

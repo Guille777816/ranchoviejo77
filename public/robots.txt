@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /checkout
+Disallow: /carrito
+Disallow: /auth
+Disallow: /api/*
+
+Sitemap: https://www.ranchoviejo.com.ar/sitemap.xml

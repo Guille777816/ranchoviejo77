@@ -12,12 +12,25 @@ import { ShoppingBag } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Rancho Viejo Mates — Mates, bombillas y accesorios" },
+      { title: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales" },
       {
         name: "description",
         content:
-          "Mates artesanales, bombillas, yerbas y accesorios. Envíos a todo el país.",
+          "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos. Envíos a todo el país.",
       },
+      {
+        property: "og:title",
+        content: "Rancho Viejo Mates — Mates, Bombillas y Accesorios Artesanales",
+      },
+      {
+        property: "og:description",
+        content:
+          "Venta minorista y mayorista de mates artesanales, bombillas, termos y accesorios materos. Envíos a todo el país.",
+      },
+      { property: "og:url", content: "https://www.ranchoviejo.com.ar/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.ranchoviejo.com.ar/" },
     ],
   }),
   component: Home,
