@@ -7,6 +7,7 @@ import { useCart, itemKey } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { formatPrice } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
+import { AlertCircle, ShoppingBag } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,8 +51,47 @@ function CheckoutPage() {
     );
   }
 
+  if (subtotalCents < 10_000_000) {
+    return (
+      <div className="min-h-screen">
+        <SiteHeader />
+        <div className="mx-auto max-w-xl px-4 py-16 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/30 bg-primary/15 text-primary shadow-lg">
+            <ShoppingBag className="h-8 w-8" />
+          </div>
+          <h1 className="text-2xl font-bold">Compra mínima requerida</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Para realizar pedidos mayoristas en Rancho Viejo, la compra mínima es de <strong className="text-foreground">$ 100.000</strong>.
+          </p>
+          <div className="mx-auto mt-6 max-w-md rounded-2xl border border-border bg-card p-5 text-sm shadow-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Subtotal actual:</span>
+              <span className="font-semibold text-foreground">{formatPrice(subtotalCents)}</span>
+            </div>
+            <div className="mt-2 flex justify-between border-t border-border/60 pt-2 text-primary font-semibold">
+              <span>Te faltan:</span>
+              <span>{formatPrice(10_000_000 - subtotalCents)}</span>
+            </div>
+          </div>
+          <div className="mt-6 flex justify-center gap-3">
+            <Button asChild variant="outline">
+              <Link to="/carrito">Volver al carrito</Link>
+            </Button>
+            <Button asChild>
+              <Link to="/tienda">Sumar más productos</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (subtotalCents < 10_000_000) {
+      toast.error("La compra mínima mayorista es de $ 100.000");
+      return;
+    }
     if (!form.customer_name || !form.customer_email) {
       toast.error("Completá nombre y email");
       return;

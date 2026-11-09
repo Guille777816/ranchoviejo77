@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { MinimumPurchaseBubble } from "@/components/MinimumPurchaseBubble";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -145,6 +146,7 @@ function RootComponent() {
       <AuthProvider>
         <CartProvider>
           <Outlet />
+          <MinimumPurchaseBubble />
           <WhatsAppButton />
           <Toaster richColors position="top-right" />
         </CartProvider>

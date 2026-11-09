@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { useCart, itemKey } from "@/lib/cart";
 import { formatPrice } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, Minus, Plus, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/carrito")({
   head: () => ({ meta: [{ title: "Carrito — Rancho Viejo Mates" }] }),
@@ -110,9 +110,33 @@ function CarritoPage() {
                 <span>Total</span>
                 <span>{formatPrice(subtotalCents)}</span>
               </div>
-              <Button asChild className="mt-4 w-full" size="lg">
-                <Link to="/checkout">Finalizar compra</Link>
-              </Button>
+
+              {subtotalCents < 10_000_000 && (
+                <div className="mt-3 rounded-xl border border-primary/40 bg-primary/10 p-3 text-xs text-foreground">
+                  <div className="flex items-center gap-1.5 font-semibold text-primary">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>Compra mínima: $ 100.000</span>
+                  </div>
+                  <p className="mt-1 text-muted-foreground">
+                    Te faltan <strong className="text-foreground">{formatPrice(10_000_000 - subtotalCents)}</strong> para alcanzar el mínimo mayorista.
+                  </p>
+                </div>
+              )}
+
+              {subtotalCents >= 10_000_000 ? (
+                <Button asChild className="mt-4 w-full" size="lg">
+                  <Link to="/checkout">Finalizar compra</Link>
+                </Button>
+              ) : (
+                <div className="mt-4 space-y-2">
+                  <Button disabled className="w-full opacity-60 cursor-not-allowed" size="lg">
+                    Mínimo requerido $ 100.000
+                  </Button>
+                  <Button asChild variant="outline" className="w-full text-xs">
+                    <Link to="/tienda">Sumar más productos</Link>
+                  </Button>
+                </div>
+              )}
             </aside>
           </div>
         )}
