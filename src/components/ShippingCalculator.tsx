@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Truck, MapPin, Building2, ExternalLink, Loader2, CheckCircle2, ShieldCheck, Search, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import { Truck, MapPin, Building2, ExternalLink, Loader2, CheckCircle2, ShieldCheck, Search, ChevronDown, ChevronUp, X } from "lucide-react";
 import { calculateShippingQuote, type ShippingQuoteResult, type ShippingCarrier } from "@/lib/shipping";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ShippingQuoteResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedCarrier, setSelectedCarrier] = useState<"TODOS" | ShippingCarrier>("TODOS");
 
   // Buscador de agencias Vía Cargo
@@ -39,18 +40,6 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
   const [loadingAgencies, setLoadingAgencies] = useState(false);
   const [agencySearch, setAgencySearch] = useState("");
 
-  // Leer código postal guardado previamente
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("rv_postal_code") || localStorage.getItem("fdm_postal_code");
-      if (saved && saved.length >= 4) {
-        setPostalCode(saved);
-        const quote = calculateShippingQuote(saved);
-        setResult(quote);
-      }
-    } catch {}
-  }, []);
-
   const handleCalculate = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const clean = postalCode.replace(/\D/g, "");
@@ -58,6 +47,7 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
     if (!clean || clean.length < 4) {
       setError("Ingresá un código postal válido (4 dígitos)");
       setResult(null);
+      setIsExpanded(false);
       return;
     }
 
@@ -71,8 +61,20 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
     setTimeout(() => {
       const quote = calculateShippingQuote(clean.slice(0, 4));
       setResult(quote);
+      setIsExpanded(true);
       setLoading(false);
     }, 250);
+  };
+
+  const handleClear = () => {
+    setPostalCode("");
+    setResult(null);
+    setIsExpanded(false);
+    setError(null);
+    setShowAgencies(false);
+    try {
+      localStorage.removeItem("rv_postal_code");
+    } catch {}
   };
 
   const handleLoadAgencies = async () => {
@@ -114,72 +116,66 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
   }).slice(0, 8);
 
   return (
-    <div className={`rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 shadow-sm text-neutral-900 transition-all ${className}`}>
-      {/* Encabezado con los 3 logos oficiales */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-800 border border-neutral-200/80">
-            <Truck className="h-5 w-5" />
+    <div className={`rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm text-neutral-900 transition-all ${className}`}>
+      {/* Cuadrito compacto de Cotizar Envío */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-800 border border-neutral-200/80">
+            <Truck className="h-4 w-4" />
           </div>
-          <div>
-            <h3 className="text-sm sm:text-base font-bold text-neutral-900 flex items-center gap-2">
-              Medios de envío y transporte
-            </h3>
-            <p className="text-xs text-neutral-500">
-              Despachamos por Andreani, Correo Argentino y Vía Cargo a todo el país:
+          <div className="min-w-0">
+            <h4 className="text-sm font-bold text-neutral-900 truncate">
+              Cotizar envío
+            </h4>
+            <p className="text-[11px] text-neutral-500 truncate">
+              Andreani · Correo Argentino · Vía Cargo
             </p>
           </div>
         </div>
 
-        {/* Logos de los 3 transportes */}
-        <div className="flex items-center gap-2.5 self-start sm:self-auto bg-neutral-50 px-3 py-1.5 rounded-xl border border-neutral-200 shadow-xs">
+        {/* Miniaturas de logos de transportes */}
+        <div className="flex items-center gap-1.5 shrink-0 bg-neutral-50 px-2 py-1 rounded-lg border border-neutral-200/80">
           <img
             src="/images/carriers/andreani.png"
             alt="Andreani"
-            title="Andreani Oficial"
-            className="h-6 w-6 object-contain"
+            title="Andreani"
+            className="h-4 w-4 object-contain"
           />
           <img
             src="/images/carriers/correo-argentino.png"
             alt="Correo Argentino"
-            title="Correo Argentino Oficial"
-            className="h-6 w-6 object-contain"
+            title="Correo Argentino"
+            className="h-4 w-4 object-contain"
           />
           <img
             src="/images/carriers/viacargo.png"
             alt="Vía Cargo"
-            title="Vía Cargo Oficial"
-            className="h-5 w-12 object-contain"
+            title="Vía Cargo"
+            className="h-3 w-8 object-contain"
           />
         </div>
       </div>
 
-      {/* Input y botón calcular */}
-      <form onSubmit={handleCalculate} className="mt-4 flex flex-col sm:flex-row gap-2">
+      {/* Formulario compacto: Input CP y Botón Cotizar */}
+      <form onSubmit={handleCalculate} className="mt-3 flex gap-2">
         <div className="relative flex-1">
           <Input
             type="text"
             inputMode="numeric"
             maxLength={8}
-            placeholder="Ingresá tu código postal (ej: 1043, 2000, 5000...)"
+            placeholder="Tu código postal (ej: 1043, 2000...)"
             value={postalCode}
             onChange={(e) => {
               setPostalCode(e.target.value);
               if (error) setError(null);
             }}
-            className="h-10 text-sm bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400 font-medium focus-visible:ring-1 focus-visible:ring-neutral-900 focus-visible:border-neutral-900 pr-8"
+            className="h-9 text-xs sm:text-sm bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400 font-medium focus-visible:ring-1 focus-visible:ring-neutral-900 pr-7"
           />
           {postalCode && (
             <button
               type="button"
-              onClick={() => {
-                setPostalCode("");
-                setResult(null);
-                try {
-                  localStorage.removeItem("rv_postal_code");
-                } catch {}
-              }}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-xs font-bold"
+              onClick={handleClear}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-xs font-bold p-1"
             >
               ✕
             </button>
@@ -188,115 +184,69 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
         <Button
           type="submit"
           disabled={loading || !postalCode.trim()}
-          className="h-10 px-5 font-semibold shrink-0 gap-1.5 bg-neutral-900 hover:bg-neutral-800 text-white transition-colors"
+          className="h-9 px-4 text-xs font-bold shrink-0 gap-1.5 bg-neutral-900 hover:bg-neutral-800 text-white transition-colors"
         >
           {loading ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin text-white" />
-              Calculando...
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />
+              <span>Cotizando...</span>
             </>
           ) : (
-            "Calcular costo"
+            <span>Cotizar</span>
           )}
         </Button>
       </form>
 
-      {/* Enlaces de ayuda */}
-      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+      {/* Enlace sutil para buscar CP si no lo sabe */}
+      <div className="mt-2 flex items-center justify-between text-[11px] text-neutral-500">
         <a
           href="https://www.correoargentino.com.ar/formularios/cpa"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-900 transition-colors hover:underline text-[11px]"
+          className="hover:text-neutral-900 hover:underline inline-flex items-center gap-1 text-[11px]"
         >
-          <span>¿No sabés tu código postal? Buscalo en Correo Argentino</span>
-          <ExternalLink className="h-3 w-3" />
+          <span>¿No sabés tu código postal?</span>
+          <ExternalLink className="h-2.5 w-2.5" />
         </a>
 
-        <button
-          type="button"
-          onClick={handleLoadAgencies}
-          className="inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-700 hover:text-neutral-900 hover:underline"
-        >
-          <span>Ver agencias Vía Cargo</span>
-          {showAgencies ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-        </button>
+        {isExpanded && (
+          <button
+            type="button"
+            onClick={() => setIsExpanded(false)}
+            className="font-medium text-neutral-600 hover:text-neutral-900 hover:underline inline-flex items-center gap-1"
+          >
+            <span>Ocultar precios</span>
+            <ChevronUp className="h-3 w-3" />
+          </button>
+        )}
       </div>
 
-      {/* Desplegable de Agencias Vía Cargo */}
-      {showAgencies && (
-        <div className="mt-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3 animate-in fade-in duration-200">
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <span className="text-xs font-bold text-neutral-800 flex items-center gap-1.5">
-              <img src="/images/carriers/viacargo.png" alt="Vía Cargo" className="h-3.5 w-auto" />
-              Agencias y terminales Vía Cargo en Argentina
-            </span>
-            <span className="text-[10px] text-neutral-500 font-medium">1.127 agencias</span>
-          </div>
-
-          <div className="relative mb-2">
-            <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400" />
-            <Input
-              type="text"
-              placeholder="Buscá por ciudad o provincia (ej: Rosario, Córdoba, Mendoza...)"
-              value={agencySearch}
-              onChange={(e) => setAgencySearch(e.target.value)}
-              className="h-8 text-xs pl-8 bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400"
-            />
-          </div>
-
-          {loadingAgencies ? (
-            <div className="py-4 text-center text-xs text-neutral-500 flex items-center justify-center gap-2">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              Cargando agencias oficiales...
-            </div>
-          ) : (
-            <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1 text-xs">
-              {filteredAgencies.map((agency, idx) => (
-                <div key={idx} className="p-2 rounded-lg bg-white border border-neutral-200 shadow-2xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-neutral-900 text-[11px]">{agency.name}</span>
-                    <span className="text-[10px] text-neutral-500 font-medium">{agency.city}, {agency.province}</span>
-                  </div>
-                  <p className="text-[10px] text-neutral-600 mt-0.5">{agency.address}</p>
-                  {agency.phone && (
-                    <p className="text-[9px] text-neutral-500 mt-0.5">📞 {agency.phone}</p>
-                  )}
-                </div>
-              ))}
-              {filteredAgencies.length === 0 && (
-                <p className="text-center text-[11px] text-neutral-500 py-2">
-                  No se encontraron agencias con esa búsqueda.
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
       {error && (
-        <p className="mt-2.5 text-xs font-semibold text-red-600">{error}</p>
+        <p className="mt-2 text-xs font-semibold text-red-600">{error}</p>
       )}
 
-      {/* Resultados de Cotización */}
-      {result && (
-        <div className="mt-4 space-y-2.5 border-t border-neutral-200 pt-4 animate-in fade-in duration-200">
-          <div className="flex items-center justify-between text-xs font-semibold text-neutral-800 bg-neutral-100/90 border border-neutral-200 px-3 py-2 rounded-xl">
-            <span className="flex items-center gap-1.5">
+      {/* ============================================================== */}
+      {/* CATÁLOGO DE PRECIOS DESPLEGABLE (SOLO VISIBLE TRAS COTIZAR)    */}
+      {/* ============================================================== */}
+      {isExpanded && result && (
+        <div className="mt-3.5 space-y-2.5 border-t border-neutral-200 pt-3 animate-in fade-in slide-in-from-top-2 duration-200">
+          {/* Cabecera del destino */}
+          <div className="flex items-center justify-between text-xs font-semibold text-neutral-800 bg-neutral-50 border border-neutral-200 px-3 py-1.5 rounded-lg">
+            <span className="flex items-center gap-1.5 truncate">
               <MapPin className="h-3.5 w-3.5 text-neutral-700 shrink-0" />
-              <span>Envíos a <strong>{result.location}</strong></span>
+              <span className="truncate">Opciones para <strong>{result.location}</strong></span>
             </span>
-            <span className="text-[11px] text-neutral-500 font-medium">CP {result.postalCode}</span>
+            <span className="text-[11px] text-neutral-500 font-medium shrink-0">CP {result.postalCode}</span>
           </div>
 
-          {/* Filtros por transporte */}
+          {/* Filtros rápidos por empresa */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5">
             <button
               type="button"
               onClick={() => setSelectedCarrier("TODOS")}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+              className={`px-2.5 py-0.5 rounded-md text-[11px] font-medium transition-colors shrink-0 ${
                 selectedCarrier === "TODOS"
-                  ? "bg-neutral-900 text-white font-semibold shadow-xs"
+                  ? "bg-neutral-900 text-white font-semibold"
                   : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
@@ -305,64 +255,64 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
             <button
               type="button"
               onClick={() => setSelectedCarrier("Andreani")}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium transition-colors shrink-0 ${
                 selectedCarrier === "Andreani"
-                  ? "bg-[#E30613] text-white font-semibold shadow-xs"
+                  ? "bg-[#E30613] text-white font-semibold"
                   : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
-              <img src="/images/carriers/andreani.png" alt="" className="h-3.5 w-3.5 object-contain" />
+              <img src="/images/carriers/andreani.png" alt="" className="h-3 w-3 object-contain" />
               Andreani
             </button>
             <button
               type="button"
               onClick={() => setSelectedCarrier("Correo Argentino")}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium transition-colors shrink-0 ${
                 selectedCarrier === "Correo Argentino"
-                  ? "bg-[#FFCC00] text-neutral-900 font-bold shadow-xs"
+                  ? "bg-[#FFCC00] text-neutral-900 font-bold"
                   : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
-              <img src="/images/carriers/correo-argentino.png" alt="" className="h-3.5 w-3.5 object-contain" />
+              <img src="/images/carriers/correo-argentino.png" alt="" className="h-3 w-3 object-contain" />
               Correo Argentino
             </button>
             <button
               type="button"
               onClick={() => setSelectedCarrier("Vía Cargo")}
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-medium transition-colors shrink-0 ${
                 selectedCarrier === "Vía Cargo"
-                  ? "bg-[#008A3B] text-white font-semibold shadow-xs"
+                  ? "bg-[#008A3B] text-white font-semibold"
                   : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
-              <img src="/images/carriers/viacargo.png" alt="" className="h-3 w-8 object-contain" />
+              <img src="/images/carriers/viacargo.png" alt="" className="h-2.5 w-6 object-contain" />
               Vía Cargo
             </button>
           </div>
 
-          {/* Lista de opciones de envío cotizadas */}
-          <div className="space-y-2">
+          {/* Tarjetas individuales de opciones */}
+          <div className="space-y-1.5">
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-xs transition-all"
+                className="flex items-center justify-between gap-2.5 p-2.5 rounded-xl border border-neutral-200 bg-white hover:border-neutral-300 transition-all"
               >
-                <div className="flex items-start gap-3 min-w-0">
-                  <div className="mt-0.5 shrink-0 p-1 rounded-lg bg-neutral-50 border border-neutral-100">
+                <div className="flex items-start gap-2.5 min-w-0">
+                  <div className="mt-0.5 shrink-0 p-1 rounded-md bg-neutral-50 border border-neutral-100">
                     <img
                       src={item.logoUrl}
                       alt={item.carrier}
-                      className="h-6 w-6 object-contain"
+                      className="h-5 w-5 object-contain"
                     />
                   </div>
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs sm:text-sm font-bold text-neutral-900">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-xs font-bold text-neutral-900">
                         {item.title}
                       </span>
                       {item.badge && (
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                          className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
                             item.badgeColor === "blue"
                               ? "bg-red-50 text-red-700 border border-red-200/60"
                               : item.badgeColor === "emerald"
@@ -374,28 +324,82 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-neutral-500 truncate mt-0.5">{item.subtitle}</p>
-                    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-neutral-600 font-medium">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                    <p className="text-[10px] text-neutral-500 truncate mt-0.5">{item.subtitle}</p>
+                    <div className="mt-0.5 flex items-center gap-1 text-[10px] text-neutral-600 font-medium">
+                      <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
                       <span>{item.estimatedTime}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <div className="text-base sm:text-lg font-extrabold text-neutral-900">
+                  <div className="text-sm font-extrabold text-neutral-900">
                     {formatMoney(item.price)}
                   </div>
-                  <div className="text-[10px] text-neutral-400 font-medium">precio final</div>
+                  <div className="text-[9px] text-neutral-400">precio final</div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-3 flex items-center gap-2 text-[11px] text-neutral-600 bg-neutral-50 border border-neutral-200/80 px-3.5 py-2.5 rounded-xl">
-            <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+          {/* Botón para ver agencias Vía Cargo */}
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={handleLoadAgencies}
+              className="w-full py-1.5 px-3 rounded-lg border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-[11px] font-semibold text-neutral-700 flex items-center justify-between transition-colors"
+            >
+              <span className="flex items-center gap-1.5">
+                <img src="/images/carriers/viacargo.png" alt="" className="h-2.5 w-6 object-contain" />
+                <span>Consultar agencias y terminales Vía Cargo en tu provincia</span>
+              </span>
+              {showAgencies ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </button>
+
+            {showAgencies && (
+              <div className="mt-2 rounded-xl border border-neutral-200 bg-neutral-50 p-2.5 animate-in fade-in duration-150">
+                <div className="relative mb-2">
+                  <Search className="h-3 w-3 absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <Input
+                    type="text"
+                    placeholder="Buscá tu ciudad (ej: Rosario, Córdoba, Moreno...)"
+                    value={agencySearch}
+                    onChange={(e) => setAgencySearch(e.target.value)}
+                    className="h-7 text-[11px] pl-7 bg-white border-neutral-300"
+                  />
+                </div>
+
+                {loadingAgencies ? (
+                  <div className="py-2 text-center text-[11px] text-neutral-500 flex items-center justify-center gap-1.5">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Cargando agencias...
+                  </div>
+                ) : (
+                  <div className="max-h-36 overflow-y-auto space-y-1 text-xs pr-1">
+                    {filteredAgencies.map((agency, idx) => (
+                      <div key={idx} className="p-1.5 rounded-md bg-white border border-neutral-200 text-[10px]">
+                        <div className="flex justify-between font-semibold text-neutral-800">
+                          <span>{agency.name}</span>
+                          <span className="text-neutral-500">{agency.city}</span>
+                        </div>
+                        <p className="text-neutral-500 text-[9px]">{agency.address}</p>
+                      </div>
+                    ))}
+                    {filteredAgencies.length === 0 && (
+                      <p className="text-center text-[10px] text-neutral-500 py-1">
+                        No se encontraron agencias.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5 text-[10px] text-neutral-500 bg-neutral-50 border border-neutral-200/80 px-2.5 py-1.5 rounded-lg">
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
             <span>
-              Todos los pedidos de Rancho Viejo incluyen <strong>código de seguimiento oficial</strong> y embalaje especial para proteger mates, bombillas y accesorios.
+              Incluye <strong>código de seguimiento oficial</strong> y embalaje protegido.
             </span>
           </div>
         </div>
