@@ -1,5 +1,5 @@
 // Configuración oficial y cotizador - Rancho Viejo Mates
-// Origen: Rosario / Santa Fe (CP 2000)
+// Origen: Venado Tuerto / Santa Fe (CP 2600)
 // Correo Argentino oficial (tarifas sincronizadas con Empretienda) y Andreani
 
 export type ShippingCarrier = "Correo Argentino" | "Andreani" | "Rancho Viejo";
@@ -38,7 +38,7 @@ export const SHIPPING_OPTIONS: ShippingOption[] = [
   },
   {
     id: "santa-fe",
-    name: "Correo Argentino — Santa Fe / Rosario",
+    name: "Correo Argentino — Santa Fe y Región",
     description: "Envío clásico regional a domicilio por Correo Argentino (2 a 4 días)",
     price: 8220,
     carrier: "Correo Argentino",
@@ -77,7 +77,7 @@ export function getShippingOption(id: string): ShippingOption | undefined {
   return SHIPPING_OPTIONS.find((o) => o.id === id);
 }
 
-export const ORIGIN_POSTAL_CODE = "2000"; // Rosario / Santa Fe
+export const ORIGIN_POSTAL_CODE = "2600"; // Venado Tuerto / Santa Fe
 export const STANDARD_PACKAGE = { weight: 1000, height: 15, width: 20, length: 30 };
 
 export function normalizePostalCode(cp: string) {
@@ -114,10 +114,11 @@ export function resolveLocationFromCP(cp: string): { location: string; province:
   const num = parseInt(digits.slice(0, 4), 10);
   if (isNaN(num)) return { location: "Argentina", province: "Argentina" };
 
+  if (num === 2600) return { location: "Venado Tuerto (Santa Fe)", province: "Santa Fe" };
   if (num >= 1000 && num <= 1499) return { location: "Capital Federal (CABA)", province: "Capital Federal" };
   if (num >= 1600 && num <= 1899) return { location: "Gran Buenos Aires (GBA)", province: "Buenos Aires" };
   if (num >= 1900 && num <= 1999) return { location: "La Plata y alrededores", province: "Buenos Aires" };
-  if (num >= 2000 && num <= 2999) return { location: "Rosario / Santa Fe y zona", province: "Santa Fe" };
+  if (num >= 2000 && num <= 2999) return { location: "Santa Fe y zona (Rosario, Rafaela, etc.)", province: "Santa Fe" };
   if (num >= 3000 && num <= 3999) return { location: "Santa Fe / Entre Ríos / Corrientes / Misiones", province: "Litoral" };
   if (num >= 4000 && num <= 4999) return { location: "Tucumán / Salta / Jujuy / Sgo. del Estero", province: "Noroeste Argentino (NOA)" };
   if (num >= 5000 && num <= 5999) return { location: "Córdoba y zona centro", province: "Córdoba" };
@@ -236,12 +237,63 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badgeColor: "blue",
     });
 
-  // 3. Rosario / Santa Fe y zona (2000 - 2999) - Regional
+  // 3. Venado Tuerto (Origen Local - CP 2600)
+  } else if (num === 2600) {
+    items.push({
+      id: "ca-local-domicilio",
+      title: "Correo Argentino — Envío Local a Domicilio",
+      subtitle: "Entrega puerta a puerta en Venado Tuerto",
+      carrier: "Correo Argentino",
+      logoUrl: "/images/carriers/correo-argentino.png",
+      price: 7000,
+      estimatedTime: "Llega en 24 a 48 hs",
+      type: "domicilio",
+      badge: "Local",
+      badgeColor: "amber",
+    });
+    items.push({
+      id: "ca-local-sucursal",
+      title: "Correo Argentino — Retiro en Sucursal Venado Tuerto",
+      subtitle: "Retiro en la sucursal de Correo Argentino de Venado Tuerto",
+      carrier: "Correo Argentino",
+      logoUrl: "/images/carriers/correo-argentino.png",
+      price: 5200,
+      estimatedTime: "Disponible en 24 a 48 hs",
+      type: "sucursal",
+      badge: "Económico",
+      badgeColor: "amber",
+    });
+    items.push({
+      id: "an-local-domicilio",
+      title: "Andreani — Envío Local a Domicilio",
+      subtitle: "Despacho directo y entrega express en Venado Tuerto",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 7200,
+      estimatedTime: "Llega en 24 hs",
+      type: "domicilio",
+      badge: "Más Rápido",
+      badgeColor: "blue",
+    });
+    items.push({
+      id: "an-local-sucursal",
+      title: "Andreani — Retiro en Sucursal Venado Tuerto",
+      subtitle: "Retiro en sucursal Andreani de Venado Tuerto",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 4950,
+      estimatedTime: "Disponible en 24 hs",
+      type: "sucursal",
+      badge: "Express",
+      badgeColor: "blue",
+    });
+
+  // 4. Santa Fe y zona regional (2000 - 2999) - Regional desde Venado Tuerto
   } else if (num >= 2000 && num <= 2999) {
     items.push({
       id: "ca-domicilio",
       title: "Correo Argentino — Envío Regional a Domicilio",
-      subtitle: "Entrega regional asegurada en Santa Fe / Rosario",
+      subtitle: "Entrega regional asegurada en Santa Fe (Rosario, Rafaela, etc.)",
       carrier: "Correo Argentino",
       logoUrl: "/images/carriers/correo-argentino.png",
       price: 8220,
@@ -253,7 +305,7 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
     items.push({
       id: "ca-sucursal",
       title: "Correo Argentino — Retiro en Sucursal",
-      subtitle: "Retiro en sucursal de Correo Argentino más cercana",
+      subtitle: "Retiro en sucursal de Correo Argentino más cercana en Santa Fe",
       carrier: "Correo Argentino",
       logoUrl: "/images/carriers/correo-argentino.png",
       price: 5347,
@@ -265,7 +317,7 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
     items.push({
       id: "an-domicilio",
       title: "Andreani — Envío Regional a Domicilio",
-      subtitle: "Despacho directo desde origen en Rosario / Santa Fe",
+      subtitle: "Despacho directo desde Venado Tuerto a todo Santa Fe",
       carrier: "Andreani",
       logoUrl: "/images/carriers/andreani.png",
       price: 7850,

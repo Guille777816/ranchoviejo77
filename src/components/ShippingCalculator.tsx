@@ -109,7 +109,7 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
             type="text"
             inputMode="numeric"
             maxLength={8}
-            placeholder="Tu código postal (ej: 1043, 2000...)"
+            placeholder="Tu código postal (ej: 2600, 1043...)"
             value={postalCode}
             onChange={(e) => {
               setPostalCode(e.target.value);
