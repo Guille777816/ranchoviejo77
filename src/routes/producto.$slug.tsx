@@ -10,7 +10,6 @@ import { useCart } from "@/lib/cart";
 import { useSiteSettings, whatsappLink } from "@/lib/site-settings";
 import { getOptimizedImageUrl } from "@/lib/image";
 import { Check, MessageCircle, ShoppingBag } from "lucide-react";
-import { PaymentMethodsWidget } from "@/components/PaymentMethodsWidget";
 import { ShippingCalculator } from "@/components/ShippingCalculator";
 
 export const Route = createFileRoute("/producto/$slug")({
@@ -338,13 +337,8 @@ function ProductoPage() {
               })()}
             </div>
 
-            {/* Widget de medios de pago estilo Wigy */}
-            <div className="mt-6">
-              <PaymentMethodsWidget price={product.price_cents / 100} />
-            </div>
-
             {/* Cotizador de envíos Correo Argentino */}
-            <div className="mt-4">
+            <div className="mt-6">
               <ShippingCalculator />
             </div>
           </div>

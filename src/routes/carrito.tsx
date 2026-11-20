@@ -4,7 +4,6 @@ import { useCart, itemKey } from "@/lib/cart";
 import { formatPrice } from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, Minus, Plus, Trash2 } from "lucide-react";
-import { PaymentMethodsWidget } from "@/components/PaymentMethodsWidget";
 import { ShippingCalculator } from "@/components/ShippingCalculator";
 
 export const Route = createFileRoute("/carrito")({
@@ -140,8 +139,7 @@ function CarritoPage() {
                 </div>
               )}
 
-              <div className="mt-5 space-y-3">
-                <PaymentMethodsWidget compact price={subtotalCents / 100} showTransferBadge={false} />
+              <div className="mt-5">
                 <ShippingCalculator compact />
               </div>
             </aside>
