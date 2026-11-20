@@ -1,7 +1,8 @@
-// Configuración oficial y cotizador multilogística - Rancho Viejo Mates
-// Andreani, Correo Argentino y Vía Cargo
+// Configuración oficial y cotizador - Rancho Viejo Mates
+// Origen: Rosario / Santa Fe (CP 2000)
+// Correo Argentino oficial (tarifas sincronizadas con Empretienda) y Andreani
 
-export type ShippingCarrier = "Andreani" | "Correo Argentino" | "Vía Cargo" | "Rancho Viejo";
+export type ShippingCarrier = "Correo Argentino" | "Andreani" | "Rancho Viejo";
 
 export type ShippingOptionId =
   | "caba"
@@ -10,8 +11,7 @@ export type ShippingOptionId =
   | "resto-pais"
   | "sucursal-correo"
   | "andreani-domicilio"
-  | "andreani-sucursal"
-  | "viacargo-terminal";
+  | "andreani-sucursal";
 
 export type ShippingOption = {
   id: ShippingOptionId;
@@ -23,16 +23,9 @@ export type ShippingOption = {
 
 export const SHIPPING_OPTIONS: ShippingOption[] = [
   {
-    id: "andreani-domicilio",
-    name: "Andreani — Envío a Domicilio",
-    description: "Entrega puerta a puerta más rápida por Andreani (1 a 3 días)",
-    price: 9998,
-    carrier: "Andreani",
-  },
-  {
     id: "caba",
-    name: "Correo Argentino — Capital Federal (CABA)",
-    description: "Envío clásico a domicilio por Correo Argentino (3 a 6 días)",
+    name: "Correo Argentino — Envío Clásico a Domicilio (CABA)",
+    description: "Entrega clásica a domicilio por Correo Argentino (3 a 6 días)",
     price: 9492,
     carrier: "Correo Argentino",
   },
@@ -46,7 +39,7 @@ export const SHIPPING_OPTIONS: ShippingOption[] = [
   {
     id: "santa-fe",
     name: "Correo Argentino — Santa Fe / Rosario",
-    description: "Envío clásico a domicilio regional por Correo Argentino (2 a 4 días)",
+    description: "Envío clásico regional a domicilio por Correo Argentino (2 a 4 días)",
     price: 8220,
     carrier: "Correo Argentino",
   },
@@ -65,18 +58,18 @@ export const SHIPPING_OPTIONS: ShippingOption[] = [
     carrier: "Correo Argentino",
   },
   {
+    id: "andreani-domicilio",
+    name: "Andreani — Envío a Domicilio Express",
+    description: "Entrega puerta a puerta más rápida por Andreani (1 a 3 días)",
+    price: 9998,
+    carrier: "Andreani",
+  },
+  {
     id: "andreani-sucursal",
     name: "Andreani — Retiro en Sucursal",
     description: "Retiro en la sucursal Andreani más cercana",
     price: 5904,
     carrier: "Andreani",
-  },
-  {
-    id: "viacargo-terminal",
-    name: "Vía Cargo — Encomienda a Terminal / Agencia",
-    description: "Despacho por Vía Cargo ideal para pedidos mayoristas de mates y bultos grandes",
-    price: 7200,
-    carrier: "Vía Cargo",
   },
 ];
 
@@ -93,8 +86,7 @@ export function normalizePostalCode(cp: string) {
 }
 
 // ==========================================
-// COTIZADOR MULTILOGÍSTICA
-// Andreani + Correo Argentino + Vía Cargo
+// COTIZADOR OFICIAL - CORREO ARGENTINO Y ANDREANI
 // ==========================================
 
 export type ShippingQuoteItem = {
@@ -104,11 +96,10 @@ export type ShippingQuoteItem = {
   carrier: ShippingCarrier;
   logoUrl: string;
   price: number;
-  priceNote?: string;
   estimatedTime: string;
-  type: "domicilio" | "sucursal" | "terminal";
+  type: "domicilio" | "sucursal";
   badge?: string;
-  badgeColor?: "blue" | "amber" | "green" | "emerald";
+  badgeColor?: "blue" | "amber";
 };
 
 export type ShippingQuoteResult = {
@@ -146,18 +137,6 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
   // 1. CABA (1000 - 1499)
   if (num >= 1000 && num <= 1499) {
     items.push({
-      id: "an-domicilio",
-      title: "Andreani — Envío a Domicilio",
-      subtitle: "Entrega directa y seguimiento express en Capital Federal",
-      carrier: "Andreani",
-      logoUrl: "/images/carriers/andreani.png",
-      price: 9998,
-      estimatedTime: "Llega en 1 a 3 días hábiles",
-      type: "domicilio",
-      badge: "Más Rápido",
-      badgeColor: "blue",
-    });
-    items.push({
       id: "ca-domicilio",
       title: "Correo Argentino — Envío Clásico a Domicilio",
       subtitle: "Entrega directa en tu puerta en Capital Federal",
@@ -170,21 +149,9 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badgeColor: "amber",
     });
     items.push({
-      id: "an-sucursal",
-      title: "Andreani — Retiro en Sucursal",
-      subtitle: "Retiro en la sucursal Andreani más cercana a tu dirección",
-      carrier: "Andreani",
-      logoUrl: "/images/carriers/andreani.png",
-      price: 5904,
-      estimatedTime: "Llega en 1 a 3 días hábiles",
-      type: "sucursal",
-      badge: "Económico Express",
-      badgeColor: "blue",
-    });
-    items.push({
       id: "ca-sucursal",
       title: "Correo Argentino — Retiro en Sucursal",
-      subtitle: "Retiro en la sucursal de Correo Argentino de tu barrio",
+      subtitle: "Retiro en la sucursal de Correo Argentino más cercana",
       carrier: "Correo Argentino",
       logoUrl: "/images/carriers/correo-argentino.png",
       price: 6480,
@@ -194,24 +161,9 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badgeColor: "amber",
     });
     items.push({
-      id: "vc-terminal",
-      title: "Vía Cargo — Encomienda a Terminal / Agencia",
-      subtitle: "Retiro en agencias y terminales Vía Cargo en CABA. Ideal bultos grandes",
-      carrier: "Vía Cargo",
-      logoUrl: "/images/carriers/viacargo.png",
-      price: 7200,
-      estimatedTime: "Llega en 2 a 4 días hábiles",
-      type: "terminal",
-      badge: "Mayorista",
-      badgeColor: "emerald",
-    });
-
-  // 2. GBA y La Plata (1600 - 1999)
-  } else if (num >= 1600 && num <= 1999) {
-    items.push({
       id: "an-domicilio",
-      title: "Andreani — Envío a Domicilio",
-      subtitle: "Entrega prioritaria a domicilio en Gran Buenos Aires / La Plata",
+      title: "Andreani — Envío a Domicilio Express",
+      subtitle: "Entrega directa y seguimiento express en Capital Federal",
       carrier: "Andreani",
       logoUrl: "/images/carriers/andreani.png",
       price: 9998,
@@ -220,6 +172,21 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badge: "Más Rápido",
       badgeColor: "blue",
     });
+    items.push({
+      id: "an-sucursal",
+      title: "Andreani — Retiro en Sucursal",
+      subtitle: "Retiro en la sucursal Andreani más cercana",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 5904,
+      estimatedTime: "Llega en 1 a 3 días hábiles",
+      type: "sucursal",
+      badge: "Express",
+      badgeColor: "blue",
+    });
+
+  // 2. GBA y La Plata (1600 - 1999)
+  } else if (num >= 1600 && num <= 1999) {
     items.push({
       id: "ca-domicilio",
       title: "Correo Argentino — Envío Clásico a Domicilio",
@@ -231,18 +198,6 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       type: "domicilio",
       badge: "Clásico",
       badgeColor: "amber",
-    });
-    items.push({
-      id: "an-sucursal",
-      title: "Andreani — Retiro en Sucursal",
-      subtitle: "Retiro en sucursal Andreani de tu localidad",
-      carrier: "Andreani",
-      logoUrl: "/images/carriers/andreani.png",
-      price: 5904,
-      estimatedTime: "Llega en 1 a 3 días hábiles",
-      type: "sucursal",
-      badge: "Económico Express",
-      badgeColor: "blue",
     });
     items.push({
       id: "ca-sucursal",
@@ -257,32 +212,32 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badgeColor: "amber",
     });
     items.push({
-      id: "vc-terminal",
-      title: "Vía Cargo — Encomienda a Terminal / Agencia",
-      subtitle: "Retiro en agencias Vía Cargo de tu zona. Recomendado compras mayoristas",
-      carrier: "Vía Cargo",
-      logoUrl: "/images/carriers/viacargo.png",
-      price: 7200,
-      estimatedTime: "Llega en 2 a 4 días hábiles",
-      type: "terminal",
-      badge: "Mayorista",
-      badgeColor: "emerald",
-    });
-
-  // 3. Rosario / Santa Fe y zona (2000 - 2999) - Regional
-  } else if (num >= 2000 && num <= 2999) {
-    items.push({
       id: "an-domicilio",
-      title: "Andreani — Envío Regional a Domicilio",
-      subtitle: "Despacho directo desde origen en Rosario / Santa Fe",
+      title: "Andreani — Envío a Domicilio",
+      subtitle: "Entrega express puerta a puerta en Gran Buenos Aires",
       carrier: "Andreani",
       logoUrl: "/images/carriers/andreani.png",
-      price: 7850,
-      estimatedTime: "Llega en 1 a 2 días hábiles",
+      price: 9998,
+      estimatedTime: "Llega en 1 a 3 días hábiles",
       type: "domicilio",
       badge: "Más Rápido",
       badgeColor: "blue",
     });
+    items.push({
+      id: "an-sucursal",
+      title: "Andreani — Retiro en Sucursal",
+      subtitle: "Retiro en la sucursal Andreani de tu localidad",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 5904,
+      estimatedTime: "Llega en 1 a 3 días hábiles",
+      type: "sucursal",
+      badge: "Express",
+      badgeColor: "blue",
+    });
+
+  // 3. Rosario / Santa Fe y zona (2000 - 2999) - Regional
+  } else if (num >= 2000 && num <= 2999) {
     items.push({
       id: "ca-domicilio",
       title: "Correo Argentino — Envío Regional a Domicilio",
@@ -294,18 +249,6 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       type: "domicilio",
       badge: "Regional",
       badgeColor: "amber",
-    });
-    items.push({
-      id: "an-sucursal",
-      title: "Andreani — Retiro en Sucursal",
-      subtitle: "Retiro en sucursal Andreani más cercana en la región",
-      carrier: "Andreani",
-      logoUrl: "/images/carriers/andreani.png",
-      price: 4950,
-      estimatedTime: "Llega en 1 a 2 días hábiles",
-      type: "sucursal",
-      badge: "Económico Express",
-      badgeColor: "blue",
     });
     items.push({
       id: "ca-sucursal",
@@ -320,32 +263,32 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badgeColor: "amber",
     });
     items.push({
-      id: "vc-terminal",
-      title: "Vía Cargo — Encomienda a Terminal / Agencia",
-      subtitle: "Retiro en agencias y terminales Vía Cargo de Santa Fe",
-      carrier: "Vía Cargo",
-      logoUrl: "/images/carriers/viacargo.png",
-      price: 5800,
-      estimatedTime: "Llega en 1 a 2 días hábiles",
-      type: "terminal",
-      badge: "Mayorista",
-      badgeColor: "emerald",
-    });
-
-  // 4. Córdoba, Interior Bs As, Litoral (3000-3999, 5000-7999)
-  } else if ((num >= 5000 && num <= 5999) || (num >= 6000 && num <= 7999) || (num >= 3000 && num <= 3999)) {
-    items.push({
       id: "an-domicilio",
-      title: "Andreani — Envío a Domicilio",
-      subtitle: "Entrega rápida a domicilio en Córdoba, Litoral e Interior",
+      title: "Andreani — Envío Regional a Domicilio",
+      subtitle: "Despacho directo desde origen en Rosario / Santa Fe",
       carrier: "Andreani",
       logoUrl: "/images/carriers/andreani.png",
-      price: 10500,
-      estimatedTime: "Llega en 2 a 4 días hábiles",
+      price: 7850,
+      estimatedTime: "Llega en 1 a 2 días hábiles",
       type: "domicilio",
       badge: "Más Rápido",
       badgeColor: "blue",
     });
+    items.push({
+      id: "an-sucursal",
+      title: "Andreani — Retiro en Sucursal",
+      subtitle: "Retiro en sucursal Andreani más cercana en la región",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 4950,
+      estimatedTime: "Llega en 1 a 2 días hábiles",
+      type: "sucursal",
+      badge: "Express",
+      badgeColor: "blue",
+    });
+
+  // 4. Córdoba, Interior Bs As, Litoral (3000-3999, 5000-7999)
+  } else if ((num >= 5000 && num <= 5999) || (num >= 6000 && num <= 7999) || (num >= 3000 && num <= 3999)) {
     items.push({
       id: "ca-domicilio",
       title: "Correo Argentino — Envío Clásico a Domicilio",
@@ -357,18 +300,6 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       type: "domicilio",
       badge: "Clásico",
       badgeColor: "amber",
-    });
-    items.push({
-      id: "an-sucursal",
-      title: "Andreani — Retiro en Sucursal",
-      subtitle: "Retiro en la sucursal Andreani de tu ciudad",
-      carrier: "Andreani",
-      logoUrl: "/images/carriers/andreani.png",
-      price: 6400,
-      estimatedTime: "Llega en 2 a 4 días hábiles",
-      type: "sucursal",
-      badge: "Económico Express",
-      badgeColor: "blue",
     });
     items.push({
       id: "ca-sucursal",
@@ -383,32 +314,32 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badgeColor: "amber",
     });
     items.push({
-      id: "vc-terminal",
-      title: "Vía Cargo — Encomienda a Terminal / Agencia",
-      subtitle: "Retiro en terminal de ómnibus o agencia Vía Cargo oficial",
-      carrier: "Vía Cargo",
-      logoUrl: "/images/carriers/viacargo.png",
-      price: 7500,
-      estimatedTime: "Llega en 2 a 4 días hábiles",
-      type: "terminal",
-      badge: "Mayorista",
-      badgeColor: "emerald",
-    });
-
-  // 5. Patagonia Sur (9000 - 9999)
-  } else if (num >= 9000 && num <= 9999) {
-    items.push({
       id: "an-domicilio",
-      title: "Andreani — Envío Express a Domicilio",
-      subtitle: "Transporte aéreo y terrestre prioritario a Patagonia Sur",
+      title: "Andreani — Envío a Domicilio",
+      subtitle: "Entrega rápida a domicilio en Córdoba, Litoral e Interior",
       carrier: "Andreani",
       logoUrl: "/images/carriers/andreani.png",
-      price: 13500,
-      estimatedTime: "Llega en 3 a 5 días hábiles",
+      price: 10500,
+      estimatedTime: "Llega en 2 a 4 días hábiles",
       type: "domicilio",
       badge: "Más Rápido",
       badgeColor: "blue",
     });
+    items.push({
+      id: "an-sucursal",
+      title: "Andreani — Retiro en Sucursal",
+      subtitle: "Retiro en la sucursal Andreani de tu ciudad",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 6400,
+      estimatedTime: "Llega en 2 a 4 días hábiles",
+      type: "sucursal",
+      badge: "Express",
+      badgeColor: "blue",
+    });
+
+  // 5. Patagonia Sur (9000 - 9999)
+  } else if (num >= 9000 && num <= 9999) {
     items.push({
       id: "ca-domicilio",
       title: "Correo Argentino — Envío Clásico a Domicilio",
@@ -420,18 +351,6 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       type: "domicilio",
       badge: "Extrema",
       badgeColor: "amber",
-    });
-    items.push({
-      id: "an-sucursal",
-      title: "Andreani — Retiro en Sucursal",
-      subtitle: "Retiro en sucursal Andreani más cercana en el sur",
-      carrier: "Andreani",
-      logoUrl: "/images/carriers/andreani.png",
-      price: 8900,
-      estimatedTime: "Llega en 3 a 5 días hábiles",
-      type: "sucursal",
-      badge: "Económico Express",
-      badgeColor: "blue",
     });
     items.push({
       id: "ca-sucursal",
@@ -446,32 +365,32 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badgeColor: "amber",
     });
     items.push({
-      id: "vc-terminal",
-      title: "Vía Cargo — Encomienda a Terminal / Agencia",
-      subtitle: "Despacho a terminales Vía Cargo en Patagonia Sur",
-      carrier: "Vía Cargo",
-      logoUrl: "/images/carriers/viacargo.png",
-      price: 9800,
-      estimatedTime: "Llega en 4 a 6 días hábiles",
-      type: "terminal",
-      badge: "Mayorista",
-      badgeColor: "emerald",
-    });
-
-  // 6. Resto del País (NOA, Cuyo, Mendoza, Tucumán, etc.)
-  } else {
-    items.push({
       id: "an-domicilio",
-      title: "Andreani — Envío a Domicilio",
-      subtitle: "Entrega express a domicilio a todo el país",
+      title: "Andreani — Envío Express a Domicilio",
+      subtitle: "Transporte aéreo y terrestre prioritario a Patagonia Sur",
       carrier: "Andreani",
       logoUrl: "/images/carriers/andreani.png",
-      price: 11800,
-      estimatedTime: "Llega en 2 a 4 días hábiles",
+      price: 13500,
+      estimatedTime: "Llega en 3 a 5 días hábiles",
       type: "domicilio",
       badge: "Más Rápido",
       badgeColor: "blue",
     });
+    items.push({
+      id: "an-sucursal",
+      title: "Andreani — Retiro en Sucursal",
+      subtitle: "Retiro en sucursal Andreani más cercana en el sur",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 8900,
+      estimatedTime: "Llega en 3 a 5 días hábiles",
+      type: "sucursal",
+      badge: "Express",
+      badgeColor: "blue",
+    });
+
+  // 6. Resto del País (NOA, Cuyo, Mendoza, etc.)
+  } else {
     items.push({
       id: "ca-domicilio",
       title: "Correo Argentino — Envío Clásico a Domicilio",
@@ -483,18 +402,6 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       type: "domicilio",
       badge: "Clásico",
       badgeColor: "amber",
-    });
-    items.push({
-      id: "an-sucursal",
-      title: "Andreani — Retiro en Sucursal",
-      subtitle: "Retiro en la sucursal Andreani de tu ciudad",
-      carrier: "Andreani",
-      logoUrl: "/images/carriers/andreani.png",
-      price: 7450,
-      estimatedTime: "Llega en 2 a 4 días hábiles",
-      type: "sucursal",
-      badge: "Económico Express",
-      badgeColor: "blue",
     });
     items.push({
       id: "ca-sucursal",
@@ -509,16 +416,28 @@ export function calculateShippingQuote(postalCode: string): ShippingQuoteResult 
       badgeColor: "amber",
     });
     items.push({
-      id: "vc-terminal",
-      title: "Vía Cargo — Encomienda a Terminal / Agencia",
-      subtitle: "Retiro en terminal de ómnibus o agencias Vía Cargo de tu provincia",
-      carrier: "Vía Cargo",
-      logoUrl: "/images/carriers/viacargo.png",
-      price: 8400,
-      estimatedTime: "Llega en 3 a 5 días hábiles",
-      type: "terminal",
-      badge: "Mayorista",
-      badgeColor: "emerald",
+      id: "an-domicilio",
+      title: "Andreani — Envío a Domicilio",
+      subtitle: "Entrega express a domicilio a todo el país",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 11800,
+      estimatedTime: "Llega en 2 a 4 días hábiles",
+      type: "domicilio",
+      badge: "Más Rápido",
+      badgeColor: "blue",
+    });
+    items.push({
+      id: "an-sucursal",
+      title: "Andreani — Retiro en Sucursal",
+      subtitle: "Retiro en la sucursal Andreani de tu ciudad",
+      carrier: "Andreani",
+      logoUrl: "/images/carriers/andreani.png",
+      price: 7450,
+      estimatedTime: "Llega en 2 a 4 días hábiles",
+      type: "sucursal",
+      badge: "Express",
+      badgeColor: "blue",
     });
   }
 
