@@ -1,3 +1,4 @@
+// Configuración oficial y cotizador Correo Argentino - Rancho Viejo Mates
 export type ShippingOptionId =
   | "caba"
   | "buenos-aires"
