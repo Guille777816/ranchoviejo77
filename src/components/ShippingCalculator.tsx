@@ -114,25 +114,25 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
   }).slice(0, 8);
 
   return (
-    <div className={`rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs transition-all ${className}`}>
+    <div className={`rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 shadow-sm text-neutral-900 transition-all ${className}`}>
       {/* Encabezado con los 3 logos oficiales */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-800 border border-neutral-200/80">
             <Truck className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
+            <h3 className="text-sm sm:text-base font-bold text-neutral-900 flex items-center gap-2">
               Medios de envío y transporte
             </h3>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-500">
               Despachamos por Andreani, Correo Argentino y Vía Cargo a todo el país:
             </p>
           </div>
         </div>
 
         {/* Logos de los 3 transportes */}
-        <div className="flex items-center gap-2 self-start sm:self-auto bg-muted/40 px-2.5 py-1.5 rounded-xl border border-border/60">
+        <div className="flex items-center gap-2.5 self-start sm:self-auto bg-neutral-50 px-3 py-1.5 rounded-xl border border-neutral-200 shadow-xs">
           <img
             src="/images/carriers/andreani.png"
             alt="Andreani"
@@ -155,19 +155,19 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
       </div>
 
       {/* Input y botón calcular */}
-      <form onSubmit={handleCalculate} className="mt-3.5 flex flex-col sm:flex-row gap-2">
+      <form onSubmit={handleCalculate} className="mt-4 flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1">
           <Input
             type="text"
             inputMode="numeric"
             maxLength={8}
-            placeholder="Tu código postal (ej: 1043, 2000, 5000...)"
+            placeholder="Ingresá tu código postal (ej: 1043, 2000, 5000...)"
             value={postalCode}
             onChange={(e) => {
               setPostalCode(e.target.value);
               if (error) setError(null);
             }}
-            className="h-10 text-sm bg-background pr-8 font-medium"
+            className="h-10 text-sm bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400 font-medium focus-visible:ring-1 focus-visible:ring-neutral-900 focus-visible:border-neutral-900 pr-8"
           />
           {postalCode && (
             <button
@@ -179,7 +179,7 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
                   localStorage.removeItem("rv_postal_code");
                 } catch {}
               }}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground text-xs"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 text-xs font-bold"
             >
               ✕
             </button>
@@ -188,11 +188,11 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
         <Button
           type="submit"
           disabled={loading || !postalCode.trim()}
-          className="h-10 px-5 font-semibold shrink-0 gap-1.5"
+          className="h-10 px-5 font-semibold shrink-0 gap-1.5 bg-neutral-900 hover:bg-neutral-800 text-white transition-colors"
         >
           {loading ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin text-white" />
               Calculando...
             </>
           ) : (
@@ -202,12 +202,12 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
       </form>
 
       {/* Enlaces de ayuda */}
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
         <a
           href="https://www.correoargentino.com.ar/formularios/cpa"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors hover:underline text-[11px]"
+          className="inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-900 transition-colors hover:underline text-[11px]"
         >
           <span>¿No sabés tu código postal? Buscalo en Correo Argentino</span>
           <ExternalLink className="h-3 w-3" />
@@ -216,56 +216,56 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
         <button
           type="button"
           onClick={handleLoadAgencies}
-          className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
+          className="inline-flex items-center gap-1 text-[11px] font-semibold text-neutral-700 hover:text-neutral-900 hover:underline"
         >
-          <span>Buscar agencias Vía Cargo</span>
+          <span>Ver agencias Vía Cargo</span>
           {showAgencies ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
         </button>
       </div>
 
       {/* Desplegable de Agencias Vía Cargo */}
       {showAgencies && (
-        <div className="mt-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 animate-in fade-in duration-200">
+        <div className="mt-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3 animate-in fade-in duration-200">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+            <span className="text-xs font-bold text-neutral-800 flex items-center gap-1.5">
               <img src="/images/carriers/viacargo.png" alt="Vía Cargo" className="h-3.5 w-auto" />
-              Agencias oficiales Vía Cargo en el país
+              Agencias y terminales Vía Cargo en Argentina
             </span>
-            <span className="text-[10px] text-muted-foreground">1.127 agencias activas</span>
+            <span className="text-[10px] text-neutral-500 font-medium">1.127 agencias</span>
           </div>
 
           <div className="relative mb-2">
-            <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400" />
             <Input
               type="text"
-              placeholder="Buscá tu ciudad o provincia (ej: Rosario, Córdoba, Mendoza...)"
+              placeholder="Buscá por ciudad o provincia (ej: Rosario, Córdoba, Mendoza...)"
               value={agencySearch}
               onChange={(e) => setAgencySearch(e.target.value)}
-              className="h-8 text-xs pl-8 bg-background"
+              className="h-8 text-xs pl-8 bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-400"
             />
           </div>
 
           {loadingAgencies ? (
-            <div className="py-4 text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
+            <div className="py-4 text-center text-xs text-neutral-500 flex items-center justify-center gap-2">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
               Cargando agencias oficiales...
             </div>
           ) : (
             <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1 text-xs">
               {filteredAgencies.map((agency, idx) => (
-                <div key={idx} className="p-2 rounded-lg bg-background/90 border border-border/60">
+                <div key={idx} className="p-2 rounded-lg bg-white border border-neutral-200 shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-foreground text-[11px]">{agency.name}</span>
-                    <span className="text-[10px] text-muted-foreground">{agency.city}, {agency.province}</span>
+                    <span className="font-semibold text-neutral-900 text-[11px]">{agency.name}</span>
+                    <span className="text-[10px] text-neutral-500 font-medium">{agency.city}, {agency.province}</span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{agency.address}</p>
+                  <p className="text-[10px] text-neutral-600 mt-0.5">{agency.address}</p>
                   {agency.phone && (
-                    <p className="text-[9px] text-primary mt-0.5">📞 {agency.phone}</p>
+                    <p className="text-[9px] text-neutral-500 mt-0.5">📞 {agency.phone}</p>
                   )}
                 </div>
               ))}
               {filteredAgencies.length === 0 && (
-                <p className="text-center text-[11px] text-muted-foreground py-2">
+                <p className="text-center text-[11px] text-neutral-500 py-2">
                   No se encontraron agencias con esa búsqueda.
                 </p>
               )}
@@ -275,18 +275,18 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
       )}
 
       {error && (
-        <p className="mt-2 text-xs font-medium text-destructive">{error}</p>
+        <p className="mt-2.5 text-xs font-semibold text-red-600">{error}</p>
       )}
 
       {/* Resultados de Cotización */}
       {result && (
-        <div className="mt-4 space-y-2.5 border-t border-border/70 pt-3.5 animate-in fade-in duration-200">
-          <div className="flex items-center justify-between text-xs font-semibold text-foreground bg-muted/50 px-3 py-1.5 rounded-lg">
+        <div className="mt-4 space-y-2.5 border-t border-neutral-200 pt-4 animate-in fade-in duration-200">
+          <div className="flex items-center justify-between text-xs font-semibold text-neutral-800 bg-neutral-100/90 border border-neutral-200 px-3 py-2 rounded-xl">
             <span className="flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+              <MapPin className="h-3.5 w-3.5 text-neutral-700 shrink-0" />
               <span>Envíos a <strong>{result.location}</strong></span>
             </span>
-            <span className="text-[11px] text-muted-foreground">CP {result.postalCode}</span>
+            <span className="text-[11px] text-neutral-500 font-medium">CP {result.postalCode}</span>
           </div>
 
           {/* Filtros por transporte */}
@@ -294,10 +294,10 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
             <button
               type="button"
               onClick={() => setSelectedCarrier("TODOS")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
                 selectedCarrier === "TODOS"
-                  ? "bg-primary text-primary-foreground font-semibold"
-                  : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                  ? "bg-neutral-900 text-white font-semibold shadow-xs"
+                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
               Todos ({result.items.length})
@@ -305,10 +305,10 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
             <button
               type="button"
               onClick={() => setSelectedCarrier("Andreani")}
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
                 selectedCarrier === "Andreani"
-                  ? "bg-red-600 text-white font-semibold"
-                  : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                  ? "bg-[#E30613] text-white font-semibold shadow-xs"
+                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
               <img src="/images/carriers/andreani.png" alt="" className="h-3.5 w-3.5 object-contain" />
@@ -317,10 +317,10 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
             <button
               type="button"
               onClick={() => setSelectedCarrier("Correo Argentino")}
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
                 selectedCarrier === "Correo Argentino"
-                  ? "bg-amber-500 text-slate-900 font-semibold"
-                  : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                  ? "bg-[#FFCC00] text-neutral-900 font-bold shadow-xs"
+                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
               <img src="/images/carriers/correo-argentino.png" alt="" className="h-3.5 w-3.5 object-contain" />
@@ -329,10 +329,10 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
             <button
               type="button"
               onClick={() => setSelectedCarrier("Vía Cargo")}
-              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors shrink-0 ${
                 selectedCarrier === "Vía Cargo"
-                  ? "bg-emerald-600 text-white font-semibold"
-                  : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                  ? "bg-[#008A3B] text-white font-semibold shadow-xs"
+                  : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
               }`}
             >
               <img src="/images/carriers/viacargo.png" alt="" className="h-3 w-8 object-contain" />
@@ -345,57 +345,57 @@ export function ShippingCalculator({ compact = false, className = "" }: Shipping
             {filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between gap-3 p-3 rounded-xl border border-border/80 bg-background/80 hover:border-primary/40 transition-colors"
+                className="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-xs transition-all"
               >
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="mt-0.5 shrink-0">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="mt-0.5 shrink-0 p-1 rounded-lg bg-neutral-50 border border-neutral-100">
                     <img
                       src={item.logoUrl}
                       alt={item.carrier}
-                      className="h-6 w-6 object-contain rounded-md"
+                      className="h-6 w-6 object-contain"
                     />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs sm:text-sm font-semibold text-foreground">
+                      <span className="text-xs sm:text-sm font-bold text-neutral-900">
                         {item.title}
                       </span>
                       {item.badge && (
                         <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                             item.badgeColor === "blue"
-                              ? "bg-red-500/15 text-red-600 dark:text-red-400"
+                              ? "bg-red-50 text-red-700 border border-red-200/60"
                               : item.badgeColor === "emerald"
-                              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                              : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
+                              ? "bg-emerald-50 text-emerald-800 border border-emerald-200/60"
+                              : "bg-amber-50 text-amber-800 border border-amber-200/60"
                           }`}
                         >
                           {item.badge}
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-muted-foreground truncate">{item.subtitle}</p>
-                    <div className="mt-1 flex items-center gap-2 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                      <CheckCircle2 className="h-3 w-3 shrink-0" />
+                    <p className="text-[11px] text-neutral-500 truncate mt-0.5">{item.subtitle}</p>
+                    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-neutral-600 font-medium">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                       <span>{item.estimatedTime}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <div className="text-sm sm:text-base font-extrabold text-foreground">
+                  <div className="text-base sm:text-lg font-extrabold text-neutral-900">
                     {formatMoney(item.price)}
                   </div>
-                  <div className="text-[10px] text-muted-foreground">precio final</div>
+                  <div className="text-[10px] text-neutral-400 font-medium">precio final</div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-2.5 flex items-center gap-1.5 text-[11px] text-muted-foreground/90 bg-muted/30 px-3 py-2 rounded-lg">
-            <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <div className="mt-3 flex items-center gap-2 text-[11px] text-neutral-600 bg-neutral-50 border border-neutral-200/80 px-3.5 py-2.5 rounded-xl">
+            <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
             <span>
-              Todos los envíos de Rancho Viejo incluyen <strong>código de seguimiento oficial</strong> y embalaje especial protegido para mates, bombillas y accesorios.
+              Todos los pedidos de Rancho Viejo incluyen <strong>código de seguimiento oficial</strong> y embalaje especial para proteger mates, bombillas y accesorios.
             </span>
           </div>
         </div>
