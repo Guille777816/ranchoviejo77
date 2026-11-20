@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { PaymentMethodsWidget } from "@/components/PaymentMethodsWidget";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -36,6 +37,15 @@ function CheckoutPage() {
     notes: "",
   });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      const savedCp = localStorage.getItem("rv_postal_code") || localStorage.getItem("fdm_postal_code");
+      if (savedCp && !form.shipping_zip) {
+        setForm((prev) => ({ ...prev, shipping_zip: savedCp }));
+      }
+    } catch {}
+  }, []);
 
   if (items.length === 0) {
     return (
