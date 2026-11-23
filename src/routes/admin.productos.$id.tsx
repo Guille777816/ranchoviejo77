@@ -570,8 +570,6 @@ function ProductEditor() {
             </div>
           </div>
         </div>
-          </div>
-        </div>
 
         <div className="flex items-center justify-between rounded-md border p-3">
           <div>
