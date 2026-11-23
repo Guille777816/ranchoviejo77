@@ -468,20 +468,20 @@ function ProductEditor() {
         </div>
 
         {/* Sección de medidas y embalaje para envíos */}
-        <div className="rounded-md border p-3.5 bg-neutral-50/70 space-y-3">
+        <div className="rounded-md border border-border/80 bg-card p-4 space-y-4">
           <div>
-            <p className="font-semibold text-sm text-neutral-900 flex items-center gap-1.5">
+            <p className="font-semibold text-sm text-foreground flex items-center gap-2">
               <Package className="h-4 w-4 text-primary" />
               Medidas y Embalaje para Envíos (Cotizador de 3 Correos)
             </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground mt-1">
               Definí el peso y medidas de este producto. El cotizador calculará el precio justo de Correo Argentino, Andreani y OCA automáticamente según la cantidad que elija el cliente.
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-4">
             <div>
-              <Label htmlFor="weight" className="text-xs">Peso (en gramos)</Label>
+              <Label htmlFor="weight" className="text-xs text-foreground font-medium">Peso (en gramos)</Label>
               <Input
                 id="weight"
                 type="number"
@@ -490,13 +490,13 @@ function ProductEditor() {
                 placeholder="ej: 450"
                 value={weightGrams}
                 onChange={(e) => setWeightGrams(e.target.value)}
-                className="mt-1 bg-white"
+                className="mt-1 bg-background text-foreground border-border/80 focus:border-primary font-semibold text-sm"
               />
               <span className="text-[10px] text-muted-foreground">ej: 450 g = 0.45 kg</span>
             </div>
 
             <div>
-              <Label htmlFor="height" className="text-xs">Alto (cm)</Label>
+              <Label htmlFor="height" className="text-xs text-foreground font-medium">Alto (cm)</Label>
               <Input
                 id="height"
                 type="number"
@@ -505,13 +505,13 @@ function ProductEditor() {
                 placeholder="ej: 15"
                 value={heightCm}
                 onChange={(e) => setHeightCm(e.target.value)}
-                className="mt-1 bg-white"
+                className="mt-1 bg-background text-foreground border-border/80 focus:border-primary font-semibold text-sm"
               />
               <span className="text-[10px] text-muted-foreground">Altura de la caja</span>
             </div>
 
             <div>
-              <Label htmlFor="width" className="text-xs">Ancho (cm)</Label>
+              <Label htmlFor="width" className="text-xs text-foreground font-medium">Ancho (cm)</Label>
               <Input
                 id="width"
                 type="number"
@@ -520,13 +520,13 @@ function ProductEditor() {
                 placeholder="ej: 12"
                 value={widthCm}
                 onChange={(e) => setWidthCm(e.target.value)}
-                className="mt-1 bg-white"
+                className="mt-1 bg-background text-foreground border-border/80 focus:border-primary font-semibold text-sm"
               />
               <span className="text-[10px] text-muted-foreground">Ancho de la caja</span>
             </div>
 
             <div>
-              <Label htmlFor="length" className="text-xs">Largo (cm)</Label>
+              <Label htmlFor="length" className="text-xs text-foreground font-medium">Largo (cm)</Label>
               <Input
                 id="length"
                 type="number"
@@ -535,15 +535,15 @@ function ProductEditor() {
                 placeholder="ej: 12"
                 value={lengthCm}
                 onChange={(e) => setLengthCm(e.target.value)}
-                className="mt-1 bg-white"
+                className="mt-1 bg-background text-foreground border-border/80 focus:border-primary font-semibold text-sm"
               />
               <span className="text-[10px] text-muted-foreground">Largo de la caja</span>
             </div>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t border-neutral-200">
+          <div className="grid gap-3 sm:grid-cols-2 pt-3 border-t border-border/60">
             <div>
-              <Label htmlFor="decVal" className="text-xs">Valor Declarado para Seguro (ARS - Opcional)</Label>
+              <Label htmlFor="decVal" className="text-xs text-foreground font-medium">Valor Declarado para Seguro (ARS - Opcional)</Label>
               <Input
                 id="decVal"
                 type="number"
@@ -552,7 +552,7 @@ function ProductEditor() {
                 placeholder="Dejar vacío para usar el precio de venta"
                 value={declaredValue}
                 onChange={(e) => setDeclaredValue(e.target.value)}
-                className="mt-1 bg-white"
+                className="mt-1 bg-background text-foreground border-border/80 focus:border-primary font-semibold text-sm"
               />
               <span className="text-[10px] text-muted-foreground">
                 Si se deja vacío, se asegura automáticamente por el precio de venta (${price || 0}).
@@ -560,14 +560,16 @@ function ProductEditor() {
             </div>
 
             <div className="flex items-center">
-              <div className="w-full text-xs text-neutral-600 bg-white p-2.5 rounded-md border border-neutral-200">
-                <p className="font-medium text-neutral-800">Aforo volumétrico estimado:</p>
-                <p className="mt-0.5 text-neutral-500">
+              <div className="w-full text-xs bg-background/60 p-3 rounded-lg border border-border/60">
+                <p className="font-semibold text-foreground">Aforo volumétrico estimado:</p>
+                <p className="mt-0.5 text-muted-foreground">
                   {((Number(heightCm || 15) * Number(widthCm || 12) * Number(lengthCm || 12)) / 4000).toFixed(2)} kg
-                  (los correos cobran por el mayor entre peso físico y aforo).
+                  {" "}(los correos cobran por el mayor entre peso físico y aforo).
                 </p>
               </div>
             </div>
+          </div>
+        </div>
           </div>
         </div>
 

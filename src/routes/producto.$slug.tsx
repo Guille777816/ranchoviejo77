@@ -270,7 +270,7 @@ function ProductoPage() {
               })()}
 
               {/* Cuadro destacado de dimensiones y embalaje */}
-              <div className="mt-6 rounded-xl border border-neutral-200 bg-neutral-50/80 p-4">
+              <div className="mt-6 rounded-xl border border-border/80 bg-card p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Package className="h-4 w-4 text-primary" />
@@ -282,7 +282,7 @@ function ProductoPage() {
                 </div>
 
                 <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  <div className="rounded-lg border border-border/60 bg-white p-2.5 text-center shadow-2xs">
+                  <div className="rounded-lg border border-border/60 bg-background/60 p-2.5 text-center shadow-2xs">
                     <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
                       <Scale className="h-3 w-3 text-muted-foreground" /> Peso unitario
                     </div>
@@ -293,7 +293,7 @@ function ProductoPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-border/60 bg-white p-2.5 text-center shadow-2xs">
+                  <div className="rounded-lg border border-border/60 bg-background/60 p-2.5 text-center shadow-2xs">
                     <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
                       <Ruler className="h-3 w-3 text-muted-foreground" /> Medidas (Al×An×L)
                     </div>
@@ -302,7 +302,7 @@ function ProductoPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-border/60 bg-white p-2.5 text-center shadow-2xs">
+                  <div className="rounded-lg border border-border/60 bg-background/60 p-2.5 text-center shadow-2xs">
                     <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
                       <Box className="h-3 w-3 text-muted-foreground" /> Aforo volumétrico
                     </div>
@@ -311,7 +311,7 @@ function ProductoPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-border/60 bg-white p-2.5 text-center shadow-2xs">
+                  <div className="rounded-lg border border-border/60 bg-background/60 p-2.5 text-center shadow-2xs">
                     <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
                       <ShieldCheck className="h-3 w-3 text-muted-foreground" /> Valor Asegurado
                     </div>
