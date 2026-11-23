@@ -17,8 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, ImagePlus, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, ImagePlus, Plus, Trash2, Package } from "lucide-react";
 import { slugify } from "@/lib/slug";
+import {
+  extractShippingDimensions,
+  mergeShippingDimensionsIntoSpecs,
+  type ShippingDimensions,
+} from "@/lib/shipping";
 
 export const Route = createFileRoute("/admin/productos/$id")({
   component: ProductEditor,
@@ -50,6 +55,11 @@ function ProductEditor() {
   const [active, setActive] = useState(true);
   const [featured, setFeatured] = useState(false);
   const [specs, setSpecs] = useState<Array<{ label: string; value: string }>>([]);
+  const [weightGrams, setWeightGrams] = useState<string>("450");
+  const [heightCm, setHeightCm] = useState<string>("15");
+  const [widthCm, setWidthCm] = useState<string>("12");
+  const [lengthCm, setLengthCm] = useState<string>("12");
+  const [declaredValue, setDeclaredValue] = useState<string>("");
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -87,7 +97,26 @@ function ProductEditor() {
       setActive(product.active);
       setFeatured(product.featured);
       const raw = (product as unknown as { specifications?: unknown }).specifications;
-      setSpecs(Array.isArray(raw) ? (raw as Array<{ label: string; value: string }>) : []);
+      const allSpecs = Array.isArray(raw) ? (raw as Array<{ label: string; value: string }>) : [];
+      setSpecs(
+        allSpecs.filter(
+          (s) =>
+            !["peso", "alto", "altura", "ancho", "largo", "dimensiones", "valor declarado"].includes(
+              (s.label || "").toLowerCase().trim()
+            )
+        )
+      );
+
+      const dims = extractShippingDimensions(raw, product.price_cents);
+      setWeightGrams(String(dims.weightGrams));
+      setHeightCm(String(dims.heightCm));
+      setWidthCm(String(dims.widthCm));
+      setLengthCm(String(dims.lengthCm));
+      setDeclaredValue(
+        dims.declaredValueCents && dims.declaredValueCents !== product.price_cents
+          ? String(dims.declaredValueCents / 100)
+          : ""
+      );
     }
   }, [product]);
 
@@ -108,6 +137,16 @@ function ProductEditor() {
         .map((s) => ({ label: s.label.trim(), value: s.value.trim() }))
         .filter((s) => s.label || s.value);
 
+      const shippingDims: ShippingDimensions = {
+        weightGrams: Number(weightGrams) || 450,
+        heightCm: Number(heightCm) || 15,
+        widthCm: Number(widthCm) || 12,
+        lengthCm: Number(lengthCm) || 12,
+        declaredValueCents: declaredValue ? Math.round(Number(declaredValue) * 100) : undefined,
+      };
+
+      const finalSpecs = mergeShippingDimensionsIntoSpecs(cleanedSpecs, shippingDims);
+
       const payload = {
         name: parsed.data.name,
         slug: slugify(parsed.data.name),
@@ -117,7 +156,7 @@ function ProductEditor() {
         category_id: parsed.data.category_id,
         active: parsed.data.active,
         featured: parsed.data.featured,
-        specifications: cleanedSpecs,
+        specifications: finalSpecs,
       };
 
       if (isNew) {
@@ -425,6 +464,110 @@ function ProductEditor() {
                 </Button>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Sección de medidas y embalaje para envíos */}
+        <div className="rounded-md border p-3.5 bg-neutral-50/70 space-y-3">
+          <div>
+            <p className="font-semibold text-sm text-neutral-900 flex items-center gap-1.5">
+              <Package className="h-4 w-4 text-primary" />
+              Medidas y Embalaje para Envíos (Cotizador de 3 Correos)
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Definí el peso y medidas de este producto. El cotizador calculará el precio justo de Correo Argentino, Andreani y OCA automáticamente según la cantidad que elija el cliente.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-4">
+            <div>
+              <Label htmlFor="weight" className="text-xs">Peso (en gramos)</Label>
+              <Input
+                id="weight"
+                type="number"
+                min="10"
+                step="10"
+                placeholder="ej: 450"
+                value={weightGrams}
+                onChange={(e) => setWeightGrams(e.target.value)}
+                className="mt-1 bg-white"
+              />
+              <span className="text-[10px] text-muted-foreground">ej: 450 g = 0.45 kg</span>
+            </div>
+
+            <div>
+              <Label htmlFor="height" className="text-xs">Alto (cm)</Label>
+              <Input
+                id="height"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="ej: 15"
+                value={heightCm}
+                onChange={(e) => setHeightCm(e.target.value)}
+                className="mt-1 bg-white"
+              />
+              <span className="text-[10px] text-muted-foreground">Altura de la caja</span>
+            </div>
+
+            <div>
+              <Label htmlFor="width" className="text-xs">Ancho (cm)</Label>
+              <Input
+                id="width"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="ej: 12"
+                value={widthCm}
+                onChange={(e) => setWidthCm(e.target.value)}
+                className="mt-1 bg-white"
+              />
+              <span className="text-[10px] text-muted-foreground">Ancho de la caja</span>
+            </div>
+
+            <div>
+              <Label htmlFor="length" className="text-xs">Largo (cm)</Label>
+              <Input
+                id="length"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="ej: 12"
+                value={lengthCm}
+                onChange={(e) => setLengthCm(e.target.value)}
+                className="mt-1 bg-white"
+              />
+              <span className="text-[10px] text-muted-foreground">Largo de la caja</span>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 pt-2 border-t border-neutral-200">
+            <div>
+              <Label htmlFor="decVal" className="text-xs">Valor Declarado para Seguro (ARS - Opcional)</Label>
+              <Input
+                id="decVal"
+                type="number"
+                min="0"
+                step="100"
+                placeholder="Dejar vacío para usar el precio de venta"
+                value={declaredValue}
+                onChange={(e) => setDeclaredValue(e.target.value)}
+                className="mt-1 bg-white"
+              />
+              <span className="text-[10px] text-muted-foreground">
+                Si se deja vacío, se asegura automáticamente por el precio de venta (${price || 0}).
+              </span>
+            </div>
+
+            <div className="flex items-center">
+              <div className="w-full text-xs text-neutral-600 bg-white p-2.5 rounded-md border border-neutral-200">
+                <p className="font-medium text-neutral-800">Aforo volumétrico estimado:</p>
+                <p className="mt-0.5 text-neutral-500">
+                  {((Number(heightCm || 15) * Number(widthCm || 12) * Number(lengthCm || 12)) / 4000).toFixed(2)} kg
+                  (los correos cobran por el mayor entre peso físico y aforo).
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 

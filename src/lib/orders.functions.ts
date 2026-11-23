@@ -138,9 +138,9 @@ export const createOrder = createServerFn({ method: "POST" })
       external_reference: order.id,
       payment_methods: {
         excluded_payment_types: [
-          { id: "credit_card" },
           { id: "ticket" },
         ],
+        default_installments: 3,
       },
       back_urls: {
         success: `${origin}/pedido/${order.id}?status=success`,

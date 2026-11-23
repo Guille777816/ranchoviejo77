@@ -140,7 +140,11 @@ function CarritoPage() {
               )}
 
               <div className="mt-5">
-                <ShippingCalculator compact />
+                <ShippingCalculator
+                  compact
+                  quantity={items.reduce((acc, i) => acc + i.quantity, 0)}
+                  productPriceCents={subtotalCents}
+                />
               </div>
             </aside>
           </div>

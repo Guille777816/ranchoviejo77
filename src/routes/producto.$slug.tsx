@@ -9,8 +9,9 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { useSiteSettings, whatsappLink } from "@/lib/site-settings";
 import { getOptimizedImageUrl } from "@/lib/image";
-import { Check, MessageCircle, ShoppingBag } from "lucide-react";
+import { Check, MessageCircle, ShoppingBag, Box, Minus, Plus, Ruler, Scale, ShieldCheck, Package } from "lucide-react";
 import { ShippingCalculator } from "@/components/ShippingCalculator";
+import { extractShippingDimensions } from "@/lib/shipping";
 
 export const Route = createFileRoute("/producto/$slug")({
   head: ({ params }) => {
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/producto/$slug")({
 function ProductoPage() {
   const { slug } = Route.useParams();
   const [activeIdx, setActiveIdx] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const { add } = useCart();
   const { data: settings } = useSiteSettings();
   const navigate = useNavigate();
@@ -110,6 +112,7 @@ function ProductoPage() {
   const mainImg = activeVariant ? activeVariant.image_url : images[activeIdx]?.url;
   const selectedVariant = activeVariant?.name?.trim() || null;
   const outOfStock = product.stock <= 0;
+  const shippingDims = extractShippingDimensions(product.specifications, product.price_cents);
   const whatsappMsg = encodeURIComponent(
     `Hola! Me interesa el producto "${product.name}" (${formatPrice(product.price_cents)}). ¿Está disponible?`,
   );
@@ -233,26 +236,97 @@ function ProductoPage() {
                 {product.description?.trim() || "Sin descripción disponible."}
               </div>
 
-              {Array.isArray(product.specifications) && product.specifications.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    Especificaciones
-                  </h3>
-                  <dl className="mt-3 divide-y divide-border/60 rounded-lg border border-border/60">
-                    {(product.specifications as Array<{ label: string; value: string }>).map(
-                      (s, i) => (
-                        <div
-                          key={i}
-                          className="grid grid-cols-3 gap-2 px-4 py-3 text-sm"
-                        >
-                          <dt className="font-medium text-muted-foreground">{s.label}</dt>
-                          <dd className="col-span-2 text-foreground/90">{s.value}</dd>
-                        </div>
-                      ),
-                    )}
-                  </dl>
+              {/* Especificaciones generales si existen */}
+              {(() => {
+                const generalSpecs = Array.isArray(product.specifications)
+                  ? (product.specifications as Array<{ label: string; value: string }>).filter(
+                      (s) =>
+                        !["peso", "alto", "altura", "ancho", "largo", "dimensiones", "valor declarado"].includes(
+                          (s.label || "").toLowerCase().trim()
+                        )
+                    )
+                  : [];
+
+                return (
+                  generalSpecs.length > 0 && (
+                    <div className="mt-6">
+                      <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                        Especificaciones
+                      </h3>
+                      <dl className="mt-3 divide-y divide-border/60 rounded-lg border border-border/60">
+                        {generalSpecs.map((s, i) => (
+                          <div
+                            key={i}
+                            className="grid grid-cols-3 gap-2 px-4 py-3 text-sm"
+                          >
+                            <dt className="font-medium text-muted-foreground">{s.label}</dt>
+                            <dd className="col-span-2 text-foreground/90">{s.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </div>
+                  )
+                );
+              })()}
+
+              {/* Cuadro destacado de dimensiones y embalaje */}
+              <div className="mt-6 rounded-xl border border-neutral-200 bg-neutral-50/80 p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-4 w-4 text-primary" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      Datos de Embalaje y Despacho
+                    </h3>
+                  </div>
+                  <span className="text-[11px] text-muted-foreground font-medium">Ficha de envío</span>
                 </div>
-              )}
+
+                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  <div className="rounded-lg border border-border/60 bg-white p-2.5 text-center shadow-2xs">
+                    <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
+                      <Scale className="h-3 w-3 text-muted-foreground" /> Peso unitario
+                    </div>
+                    <div className="mt-0.5 text-sm font-bold text-foreground">
+                      {shippingDims.weightGrams >= 1000
+                        ? `${(shippingDims.weightGrams / 1000).toFixed(2)} kg`
+                        : `${shippingDims.weightGrams} g`}
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-border/60 bg-white p-2.5 text-center shadow-2xs">
+                    <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
+                      <Ruler className="h-3 w-3 text-muted-foreground" /> Medidas (Al×An×L)
+                    </div>
+                    <div className="mt-0.5 text-sm font-bold text-foreground">
+                      {shippingDims.heightCm} × {shippingDims.widthCm} × {shippingDims.lengthCm} cm
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-border/60 bg-white p-2.5 text-center shadow-2xs">
+                    <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
+                      <Box className="h-3 w-3 text-muted-foreground" /> Aforo volumétrico
+                    </div>
+                    <div className="mt-0.5 text-sm font-bold text-foreground">
+                      {((shippingDims.heightCm * shippingDims.widthCm * shippingDims.lengthCm) / 4000).toFixed(2)} kg
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border border-border/60 bg-white p-2.5 text-center shadow-2xs">
+                    <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
+                      <ShieldCheck className="h-3 w-3 text-muted-foreground" /> Valor Asegurado
+                    </div>
+                    <div className="mt-0.5 text-sm font-bold text-foreground">
+                      ${Math.round((shippingDims.declaredValueCents || product.price_cents) / 100).toLocaleString("es-AR")}
+                    </div>
+                  </div>
+                </div>
+
+                {quantity > 1 && (
+                  <div className="mt-2.5 text-center text-xs text-primary font-semibold bg-primary/10 rounded-md py-1.5 px-2 border border-primary/20">
+                    ⚡ Paquete para {quantity} unidades: ~{((shippingDims.weightGrams * quantity) / 1000).toFixed(2)} kg de carga protegida
+                  </div>
+                )}
+              </div>
 
               <div
                 className={`mt-6 rounded-lg border border-dashed px-4 py-3 text-sm ${
@@ -272,7 +346,44 @@ function ProductoPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex flex-wrap gap-2">
+            {/* Selector de cantidad interactivo */}
+            {!outOfStock && (
+              <div className="mt-6 flex items-center gap-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Cantidad:
+                </span>
+                <div className="flex items-center rounded-lg border border-border bg-white p-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-neutral-600 hover:text-neutral-900"
+                    disabled={quantity <= 1}
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </Button>
+                  <span className="w-10 text-center font-bold text-sm text-foreground">
+                    {quantity}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-neutral-600 hover:text-neutral-900"
+                    disabled={quantity >= product.stock}
+                    onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  ({quantity} {quantity === 1 ? "unidad" : "unidades"} · Subtotal: {formatPrice(product.price_cents * quantity)})
+                </span>
+              </div>
+            )}
+
+            <div className="mt-4 flex flex-wrap gap-2">
               <Button
                 size="lg"
                 disabled={outOfStock}
@@ -289,9 +400,13 @@ function ProductoPage() {
                       stock: product.stock,
                       variant: selectedVariant ?? undefined,
                     },
-                    1,
+                    quantity,
                   );
-                  toast.success("Agregado al carrito");
+                  toast.success(
+                    quantity > 1
+                      ? `${quantity} unidades agregadas al carrito`
+                      : "Agregado al carrito"
+                  );
                 }}
               >
                 <ShoppingBag className="mr-2 h-4 w-4" />
@@ -314,7 +429,7 @@ function ProductoPage() {
                       stock: product.stock,
                       variant: selectedVariant ?? undefined,
                     },
-                    1,
+                    quantity,
                   );
                   navigate({ to: "/checkout" });
                 }}
@@ -325,7 +440,7 @@ function ProductoPage() {
                 const link =
                   whatsappLink(
                     settings?.whatsapp_phone,
-                    `Hola! Me interesa el producto: ${product.name}`,
+                    `Hola! Me interesa el producto: ${product.name} (Cantidad: ${quantity})`,
                   ) ?? `https://wa.me/?text=${whatsappMsg}`;
                 return (
                   <Button asChild size="lg" variant="secondary">
@@ -337,9 +452,13 @@ function ProductoPage() {
               })()}
             </div>
 
-            {/* Cotizador de envíos Correo Argentino */}
+            {/* Cotizador de envíos exacto (Los 3 mejores correos) */}
             <div className="mt-6">
-              <ShippingCalculator />
+              <ShippingCalculator
+                dimensions={shippingDims}
+                quantity={quantity}
+                productPriceCents={product.price_cents}
+              />
             </div>
           </div>
         </div>

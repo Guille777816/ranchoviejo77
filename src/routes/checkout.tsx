@@ -264,12 +264,18 @@ function CheckoutPage() {
               <span>Total</span>
               <span>{formatPrice(subtotalCents)}</span>
             </div>
+            <div className="mt-1 text-right text-xs font-semibold text-emerald-600">
+              o 3 cuotas sin interés de {formatPrice(Math.round(subtotalCents / 3))}
+            </div>
             <Button type="submit" className="mt-4 w-full" size="lg" disabled={loading}>
-              {loading ? "Procesando..." : "Pagar con MercadoPago"}
+              {loading ? "Procesando..." : "Pagar con Mercado Pago (Hasta 3 cuotas sin interés)"}
             </Button>
-            <p className="mt-2 text-center text-xs text-muted-foreground">
-              Aceptamos tarjeta de débito, transferencia bancaria y dinero en cuenta MercadoPago.
-            </p>
+            <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50/70 p-2.5 text-center text-xs text-emerald-900 font-medium">
+              💳 <strong>3 cuotas sin interés</strong> con todas las tarjetas de crédito.
+              <p className="text-[11px] text-emerald-800 mt-0.5">
+                También podés abonar con tarjeta de débito, transferencia bancaria y saldo en cuenta Mercado Pago.
+              </p>
+            </div>
           </aside>
         </form>
       </div>
