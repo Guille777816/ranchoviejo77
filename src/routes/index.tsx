@@ -144,6 +144,9 @@ function Home() {
                   )}
                 </>
               );
+              const cleanLink = b.link_url
+                ? b.link_url.replace(/^https?:\/\/[^/]*lovable\.app/, "").replace(/^https?:\/\/ranchoviejo\.com\.ar/, "") || "/"
+                : null;
               return (
                 <div
                   key={b.id}
@@ -151,8 +154,8 @@ function Home() {
                     i === slide ? "opacity-100" : "pointer-events-none opacity-0"
                   }`}
                 >
-                  {b.link_url ? (
-                    <a href={b.link_url} className="block h-full w-full">
+                  {cleanLink ? (
+                    <a href={cleanLink} className="block h-full w-full">
                       {inner}
                     </a>
                   ) : (
