@@ -9,9 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { useSiteSettings, whatsappLink } from "@/lib/site-settings";
 import { getOptimizedImageUrl } from "@/lib/image";
-import { Check, MessageCircle, ShoppingBag, Box, Minus, Plus, Ruler, Scale, ShieldCheck, Package } from "lucide-react";
-import { ShippingCalculator } from "@/components/ShippingCalculator";
-import { extractShippingDimensions } from "@/lib/shipping";
+import { Check, MessageCircle, ShoppingBag, Minus, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/producto/$slug")({
   head: ({ params }) => {
@@ -112,7 +110,6 @@ function ProductoPage() {
   const mainImg = activeVariant ? activeVariant.image_url : images[activeIdx]?.url;
   const selectedVariant = activeVariant?.name?.trim() || null;
   const outOfStock = product.stock <= 0;
-  const shippingDims = extractShippingDimensions(product.specifications, product.price_cents);
   const whatsappMsg = encodeURIComponent(
     `Hola! Me interesa el producto "${product.name}" (${formatPrice(product.price_cents)}). ¿Está disponible?`,
   );
@@ -269,65 +266,6 @@ function ProductoPage() {
                 );
               })()}
 
-              {/* Cuadro destacado de dimensiones y embalaje */}
-              <div className="mt-6 rounded-xl border border-border/80 bg-card p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Package className="h-4 w-4 text-primary" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
-                      Datos de Embalaje y Despacho
-                    </h3>
-                  </div>
-                  <span className="text-[11px] text-muted-foreground font-medium">Ficha de envío</span>
-                </div>
-
-                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  <div className="rounded-lg border border-border/60 bg-background/60 p-2.5 text-center shadow-2xs">
-                    <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
-                      <Scale className="h-3 w-3 text-muted-foreground" /> Peso unitario
-                    </div>
-                    <div className="mt-0.5 text-sm font-bold text-foreground">
-                      {shippingDims.weightGrams >= 1000
-                        ? `${(shippingDims.weightGrams / 1000).toFixed(2)} kg`
-                        : `${shippingDims.weightGrams} g`}
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg border border-border/60 bg-background/60 p-2.5 text-center shadow-2xs">
-                    <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
-                      <Ruler className="h-3 w-3 text-muted-foreground" /> Medidas (Al×An×L)
-                    </div>
-                    <div className="mt-0.5 text-sm font-bold text-foreground">
-                      {shippingDims.heightCm} × {shippingDims.widthCm} × {shippingDims.lengthCm} cm
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg border border-border/60 bg-background/60 p-2.5 text-center shadow-2xs">
-                    <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
-                      <Box className="h-3 w-3 text-muted-foreground" /> Aforo volumétrico
-                    </div>
-                    <div className="mt-0.5 text-sm font-bold text-foreground">
-                      {((shippingDims.heightCm * shippingDims.widthCm * shippingDims.lengthCm) / 4000).toFixed(2)} kg
-                    </div>
-                  </div>
-
-                  <div className="rounded-lg border border-border/60 bg-background/60 p-2.5 text-center shadow-2xs">
-                    <div className="text-[11px] text-muted-foreground font-medium flex items-center justify-center gap-1">
-                      <ShieldCheck className="h-3 w-3 text-muted-foreground" /> Valor Asegurado
-                    </div>
-                    <div className="mt-0.5 text-sm font-bold text-foreground">
-                      ${Math.round((shippingDims.declaredValueCents || product.price_cents) / 100).toLocaleString("es-AR")}
-                    </div>
-                  </div>
-                </div>
-
-                {quantity > 1 && (
-                  <div className="mt-2.5 text-center text-xs text-primary font-semibold bg-primary/10 rounded-md py-1.5 px-2 border border-primary/20">
-                    ⚡ Paquete para {quantity} unidades: ~{((shippingDims.weightGrams * quantity) / 1000).toFixed(2)} kg de carga protegida
-                  </div>
-                )}
-              </div>
-
               <div
                 className={`mt-6 rounded-lg border border-dashed px-4 py-3 text-sm ${
                   outOfStock
@@ -450,15 +388,6 @@ function ProductoPage() {
                   </Button>
                 );
               })()}
-            </div>
-
-            {/* Cotizador de envíos exacto (Los 3 mejores correos) */}
-            <div className="mt-6">
-              <ShippingCalculator
-                dimensions={shippingDims}
-                quantity={quantity}
-                productPriceCents={product.price_cents}
-              />
             </div>
           </div>
         </div>
